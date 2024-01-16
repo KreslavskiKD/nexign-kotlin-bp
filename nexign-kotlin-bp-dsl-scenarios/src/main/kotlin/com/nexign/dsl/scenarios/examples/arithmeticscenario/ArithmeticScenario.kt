@@ -6,10 +6,10 @@ import com.nexign.dsl.base.specification
 
 class ArithmeticScenario(store: MutableMap<String, Any>) : Scenario(store) {
 
-    override val specification: Specification = specification(
-            ValidateOr() binary {
-                yes( ComputeSquare() next ComputePerimeter() next PrintResults())
-                no(PrintError())
-            }
-        )
+    override val specification: Specification = specification {
+        start(ValidateOr() binary {
+            yes(ComputeSquare() next ComputePerimeter() next PrintResults())
+            no(PrintError())
+        })
+    }
 }

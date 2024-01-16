@@ -1,5 +1,6 @@
-package com.nexign.dsl.drive
+package com.nexign.dsl.engine
 
+import com.nexign.dsl.engine.worker.Worker
 import com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario
 import com.nexign.dsl.scenarios.examples.bpscenario.ExampleScenario
 import com.nexign.dsl.scenarios.examples.bpscenario.mock.Abonent
@@ -7,16 +8,21 @@ import com.nexign.dsl.scenarios.examples.bpscenario.mock.Action
 
 
 fun main(args: Array<String>) {
+    val worker = Worker()
+
     val scenario = ArithmeticScenario(
         mutableMapOf(
             "a" to 12.0,
             "b" to 5.5,
         )
     )
-    scenario.run {  }
 
-    println(scenario.getScenarioDescription().toText())
+    worker.consume(scenario)
+    worker.startScenario()
 
+    println(scenario.getDescription().toText())
+
+    // TODO: move last run saving to engine
     scenario.getLastRun().forEach {
         println(it.description)
     }
@@ -27,5 +33,10 @@ fun main(args: Array<String>) {
             "action" to Action("quiz"),
         )
     )
-    bpScenario.run {  }
+
+    println("\n\n")
+    println(bpScenario.getDescription().toText())
+
+    worker.consume(bpScenario)
+    worker.startScenario()
 }
