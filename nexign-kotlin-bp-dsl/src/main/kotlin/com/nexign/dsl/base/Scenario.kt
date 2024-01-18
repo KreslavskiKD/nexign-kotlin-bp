@@ -26,6 +26,7 @@ abstract class Scenario(store: MutableMap<String, Any>) : Operation() {
 
     fun getDescription() : ScenarioDescription {
         return specification.routing.getScenarioDescription(
+
             scenarioName = this.javaClass.simpleName,
             scenarioDetailedDescription = "" // TODO: here should be some logic to get details from e.g. KDoc
         )

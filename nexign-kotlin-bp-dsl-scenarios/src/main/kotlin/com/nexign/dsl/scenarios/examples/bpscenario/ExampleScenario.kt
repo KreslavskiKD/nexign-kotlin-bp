@@ -23,9 +23,9 @@ class ExampleScenario(store: MutableMap<String, Any>) : Scenario(store)  {
         errorRouting = mutableMapOf(
             activateAction to specialErrorHandling,
             OperationDefault to defaultErrorHandling,
+            cancelActionActivation to specialErrorHandling,
         )
     }
-
 
     companion object {
         val getAbonentInfo = GetAbonentInfo()

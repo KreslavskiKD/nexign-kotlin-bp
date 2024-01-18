@@ -153,4 +153,3 @@ class MultipleChoiceBuilder {
         choices += Pair(NumberedTCMap.getNumberedTC(this.first), this.second)
     }
 }
-

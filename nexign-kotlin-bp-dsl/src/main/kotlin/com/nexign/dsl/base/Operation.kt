@@ -24,6 +24,7 @@ open class Operation {
     inline fun <reified T : Any> Scenario.putInStorage(name: String, value: T) {
         this@putInStorage.putInStorage(name, value, classOpFromStackTraces())
     }
+
 }
 
 inline fun Scenario.checkIn() {
