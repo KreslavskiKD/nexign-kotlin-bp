@@ -1,6 +1,7 @@
 package com.nexign.dsl.base
 
 import com.nexign.dsl.base.description.OperationDescription
+import com.nexign.dsl.base.transitions.*
 
 open class Operation {
     protected open val func : Scenario.() -> TransitionCondition = { TransitionCondition() }
@@ -39,3 +40,5 @@ inline infix fun Scenario.functionBuilder(innerFunc: Scenario.() -> TransitionCo
     this.checkOut(tc)
     return tc
 }
+
+object OperationDefault: Operation()

@@ -3,6 +3,10 @@ package com.nexign.dsl.base
 import com.nexign.dsl.base.description.RunStage
 import com.nexign.dsl.base.description.ScenarioDescription
 import com.nexign.dsl.base.exceptions.IllegalScenarioArgumentException
+import com.nexign.dsl.base.specification.Specification
+import com.nexign.dsl.base.transitions.START_EXECUTION
+import com.nexign.dsl.base.transitions.STOP_EXECUTION
+import com.nexign.dsl.base.transitions.TransitionCondition
 
 abstract class Scenario(store: MutableMap<String, Any>) : Operation() {
     open val specification : Specification = Specification()
@@ -21,7 +25,7 @@ abstract class Scenario(store: MutableMap<String, Any>) : Operation() {
     }
 
     fun getDescription() : ScenarioDescription {
-        return specification.getScenarioDescription(
+        return specification.routing.getScenarioDescription(
             scenarioName = this.javaClass.simpleName,
             scenarioDetailedDescription = "" // TODO: here should be some logic to get details from e.g. KDoc
         )
@@ -65,6 +69,4 @@ abstract class Scenario(store: MutableMap<String, Any>) : Operation() {
     }
 }
 
-@DslMarker
-annotation class ScenarioDSL
 

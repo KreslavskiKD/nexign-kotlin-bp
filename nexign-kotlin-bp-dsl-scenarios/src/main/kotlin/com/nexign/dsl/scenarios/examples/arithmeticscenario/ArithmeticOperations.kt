@@ -2,6 +2,7 @@ package com.nexign.dsl.scenarios.examples.arithmeticscenario
 
 import com.nexign.dsl.base.*
 import com.nexign.dsl.base.exceptions.IllegalScenarioArgumentException
+import com.nexign.dsl.base.transitions.*
 
 class ComputePerimeter: Operation() {
     override val func: Scenario.() -> TransitionCondition = {
