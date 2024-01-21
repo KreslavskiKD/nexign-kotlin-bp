@@ -12,7 +12,6 @@ class Specification {
 
     @SpecificationDSL
     var errorRouting: MutableMap<Operation, Operation> = mutableMapOf()
-
 }
 
 fun specification(init: Specification.() -> Unit) : Specification {
