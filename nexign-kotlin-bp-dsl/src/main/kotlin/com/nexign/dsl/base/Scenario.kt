@@ -4,14 +4,11 @@ import com.nexign.dsl.base.description.ScenarioDescription
 import com.nexign.dsl.base.specification.Specification
 import com.nexign.dsl.base.transitions.START_EXECUTION
 import com.nexign.dsl.base.transitions.STOP_EXECUTION
-import com.nexign.dsl.base.transitions.TransitionCondition
 
-abstract class Scenario(store: MutableMap<String, Any>) : Operation() {
+abstract class Scenario(store: MutableMap<String, Any>) {
     open val specification : Specification = Specification()
 
     val storage: MutableMap<String, Any> = store
-
-    public override val func: Scenario.() -> TransitionCondition = { START_EXECUTION }
 
     inline fun <reified T : Any> getFromStorage(name: String) : T {
         return storage[name] as T
@@ -30,12 +27,12 @@ abstract class Scenario(store: MutableMap<String, Any>) : Operation() {
     }
 
     companion object {
-        val start = object : Operation() {
-            override val func: Scenario.() -> TransitionCondition = { START_EXECUTION }
+        val start: Operation = Operation {
+            return@Operation START_EXECUTION
         }
 
-        val end = object : Operation() {
-            override val func: Scenario.() -> TransitionCondition = { STOP_EXECUTION }
+        val end: Operation = Operation {
+            return@Operation STOP_EXECUTION
         }
     }
 }
