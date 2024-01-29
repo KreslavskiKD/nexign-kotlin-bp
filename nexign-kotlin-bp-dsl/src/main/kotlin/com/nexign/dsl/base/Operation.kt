@@ -17,29 +17,6 @@ open class Operation {
             detailedDescription = "",   // TODO: crate a way to get detailed description
         )
 
-    inline fun <reified T : Any> Scenario.getFromStorage(name: String) : T {
-        return this@getFromStorage.getFromStorage(name, classOpFromStackTraces())
-    }
-
-    inline fun <reified T : Any> Scenario.putInStorage(name: String, value: T) {
-        this@putInStorage.putInStorage(name, value, classOpFromStackTraces())
-    }
-
-}
-
-inline fun Scenario.checkIn() {
-    this@checkIn.operationCheckIn("${classOpFromStackTraces()} started")
-}
-
-inline fun Scenario.checkOut(transitionCondition: TransitionCondition) {
-    this@checkOut.operationCheckIn("${classOpFromStackTraces()} ended with transition condition ${transitionCondition.javaClass.simpleName}")
-}
-
-inline infix fun Scenario.functionBuilder(innerFunc: Scenario.() -> TransitionCondition) : TransitionCondition {
-    this.checkIn()
-    val tc = this.innerFunc()
-    this.checkOut(tc)
-    return tc
 }
 
 object OperationDefault: Operation()
