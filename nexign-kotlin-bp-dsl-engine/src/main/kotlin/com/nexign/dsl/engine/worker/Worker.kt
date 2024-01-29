@@ -29,9 +29,9 @@ class Worker {
         try {
             logger.clear()
             while (currentOp != Scenario.end) {
-                logger.log("${currentOp.javaClass.simpleName} started")
+                logger.log("${currentOp.getOperationName()} started")
                 val condition = currentOp.run(scenario)
-                logger.log("${currentOp.javaClass.simpleName} ended with transition condition ${condition.javaClass.simpleName}")
+                logger.log("${currentOp.getOperationName()} ended with transition condition ${condition.javaClass.simpleName}")
                 if (condition == STOP_EXECUTION) {
                     break
                 }

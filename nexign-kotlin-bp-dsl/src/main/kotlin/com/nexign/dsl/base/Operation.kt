@@ -8,10 +8,18 @@ fun interface Operation {
 
     fun getOperationDescription() : OperationDescription =
         OperationDescription(
-            operationName = this.javaClass.simpleName,
+            operationName = getOperationName(),
             transitions = linkedMapOf(),
             detailedDescription = "",   // TODO: crate a way to get detailed description
         )
+
+    fun getOperationName() : String {
+        return if (this.javaClass.simpleName != "") {
+            this.javaClass.simpleName
+        } else {
+            this.javaClass.name
+        }
+    }
 
 }
 
