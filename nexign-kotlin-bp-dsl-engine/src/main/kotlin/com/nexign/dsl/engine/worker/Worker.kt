@@ -1,8 +1,8 @@
 package com.nexign.dsl.engine.worker
 
 import com.nexign.dsl.base.Operation
-import com.nexign.dsl.base.STOP_EXECUTION
 import com.nexign.dsl.base.Scenario
+import com.nexign.dsl.base.transitions.STOP_EXECUTION
 
 class Worker {
 
@@ -14,15 +14,31 @@ class Worker {
 
     fun startScenario() {
         var currentOp : Operation = Scenario.start
-        while (currentOp != Scenario.end) {
-            val condition = currentOp.run(scenario)
-            if (condition == STOP_EXECUTION) {
-                break
+        try {
+            while (currentOp != Scenario.end) {
+                val condition = currentOp.run(scenario)
+                if (condition == STOP_EXECUTION) {
+                    break
+                }
+                val nextOp = scenario.specification.routing[currentOp]?.get(condition)
+                    ?: throw IllegalStateException() // TODO: change to custom
+                currentOp = nextOp
             }
-            val nextOp = scenario.specification[currentOp]?.get(condition)
-                ?: throw IllegalStateException() // TODO: change to custom
-            currentOp = nextOp
+        } catch (e: Exception) {
+            if ((scenario.specification.errorRouting.isNotEmpty()) and (scenario.specification.errorRouting[currentOp] != null)) {
+                var errorOp = scenario.specification.errorRouting[currentOp]!!
+                while (errorOp != Scenario.end) {
+                    val condition = errorOp.run(scenario)
+                    if (condition == STOP_EXECUTION) {
+                        break
+                    }
+                    val nextOp = scenario.specification.routing[errorOp]?.get(condition)
+                        ?: throw IllegalStateException() // TODO: change to custom
+                    errorOp = nextOp
+                }
+            } else {
+                throw e // TODO: may be here should be a logger, or the logger should either be at the Engine itself
+            }
         }
-        return
     }
 }

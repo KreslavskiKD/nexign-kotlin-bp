@@ -1,13 +1,14 @@
-package com.nexign.dsl.base
+package com.nexign.dsl.base.specification
 
+import com.nexign.dsl.base.Operation
+import com.nexign.dsl.base.Scenario
 import com.nexign.dsl.base.description.OperationDescription
 import com.nexign.dsl.base.description.ScenarioDescription
+import com.nexign.dsl.base.transitions.*
 
-@DslMarker
-annotation class SpecificationDSL
 
 @SpecificationDSL
-class Specification {
+class RoutingMap {
     private val specification = HashMap<Operation, MutableMap<TransitionCondition, Operation>>()
 
     operator fun get(operation: Operation): Map<TransitionCondition, Operation>? {
@@ -121,8 +122,8 @@ class Specification {
     }
 }
 
-fun specification(init: Specification.() -> Unit) : Specification {
-    val spec = Specification()
+fun routing(init: RoutingMap.() -> Unit) : RoutingMap {
+    val spec = RoutingMap()
     spec.init()
     return spec
 }
@@ -152,4 +153,3 @@ class MultipleChoiceBuilder {
         choices += Pair(NumberedTCMap.getNumberedTC(this.first), this.second)
     }
 }
-
