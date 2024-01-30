@@ -1,7 +1,7 @@
 rootProject.name = "nexign-kotlin-bp"
 
 include("nexign-kotlin-bp-dsl")
-include("nexign-kotlin-bp-dsl-drive")
+include("nexign-kotlin-bp-dsl-engine")
 include("nexign-kotlin-bp-dsl-scenarios")
 
 pluginManagement {

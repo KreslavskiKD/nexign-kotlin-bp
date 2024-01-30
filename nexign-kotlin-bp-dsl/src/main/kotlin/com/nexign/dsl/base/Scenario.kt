@@ -1,22 +1,16 @@
 package com.nexign.dsl.base
 
-import com.nexign.dsl.base.description.OperationDescription
 import com.nexign.dsl.base.description.RunStage
 import com.nexign.dsl.base.description.ScenarioDescription
 import com.nexign.dsl.base.exceptions.IllegalScenarioArgumentException
 
 abstract class Scenario(store: MutableMap<String, Any>) : Operation() {
+    open val specification : Specification = Specification()
     private val storage: MutableMap<String, Any> = store
 
     private val lastRun: MutableList<RunStage> = mutableListOf()
 
-    override val func: Scenario.() -> TransitionCondition
-        get() = { START_EXECUTION }
-
-    infix fun run(processFunc: (Map<String, Any>) -> Unit) {
-        start(this)
-        processFunc(storage)
-    }
+    public override val func: Scenario.() -> TransitionCondition = { START_EXECUTION }
 
     inline fun <reified T : Any> getFromStorage(name: String, callerOperationName: String) : T {
         return fromStorage(name, callerOperationName) as T
@@ -26,40 +20,10 @@ abstract class Scenario(store: MutableMap<String, Any>) : Operation() {
         inStorage(name, value, callerOperationName)
     }
 
-    fun getScenarioDescription(): ScenarioDescription {
-        val startingOperation = specification[START_EXECUTION]
-            ?: throw IllegalStateException("No starting operation in scenario")     // TODO should be some custom exception
-
-        val visited: MutableSet<Operation> = mutableSetOf()
-        val opsDescrs: MutableMap<Operation, OperationDescription> = mutableMapOf()
-
-        var currentOps = listOf(startingOperation)
-        var nextOps = mutableListOf<Operation>()
-
-        opsDescrs[startingOperation] = startingOperation.getOperationDescription()
-
-        while (currentOps.isNotEmpty()) {
-            for (op in currentOps) {
-                for (nop in op.specification) {
-                    if (!visited.contains(nop.value)) {
-                        opsDescrs[nop.value] = nop.value.getOperationDescription()
-                        visited.add(nop.value)
-                        nextOps.add(nop.value)
-                    }
-
-                    opsDescrs[op]?.transitions?.set(nop.key, opsDescrs[nop.value]!!)
-                }
-
-            }
-            currentOps = nextOps
-            nextOps = mutableListOf()
-        }
-
-
-        return ScenarioDescription(
+    fun getDescription() : ScenarioDescription {
+        return specification.getScenarioDescription(
             scenarioName = this.javaClass.simpleName,
-            startingOperation = opsDescrs[startingOperation]!!,
-            detailedDescription = ""            // here we will need to get some KDoc probably
+            scenarioDetailedDescription = "" // TODO: here should be some logic to get details from e.g. KDoc
         )
     }
 
@@ -89,9 +53,18 @@ abstract class Scenario(store: MutableMap<String, Any>) : Operation() {
     fun getLastRun(): List<RunStage> {
         return lastRun.toList()
     }
+
+    companion object {
+        val start = object : Operation() {
+            override val func: Scenario.() -> TransitionCondition = { START_EXECUTION }
+        }
+
+        val end = object : Operation() {
+            override val func: Scenario.() -> TransitionCondition = { STOP_EXECUTION }
+        }
+    }
 }
 
 @DslMarker
 annotation class ScenarioDSL
-
 
