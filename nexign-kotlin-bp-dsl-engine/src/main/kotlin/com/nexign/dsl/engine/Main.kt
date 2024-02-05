@@ -10,33 +10,24 @@ import com.nexign.dsl.scenarios.examples.bpscenario.mock.Action
 fun main(args: Array<String>) {
     val worker = Worker()
 
-    val scenario = ArithmeticScenario(
-        mutableMapOf(
-            "a" to 12.0,
-            "b" to 5.5,
-        )
-    )
-
-    worker.consume(scenario)
+    worker.consume<ArithmeticScenario>(mutableMapOf(
+        "a" to 12.0,
+        "b" to 5.5,
+    ))
     worker.startScenario()
 
-    println(scenario.getDescription().toText())
+    println(worker.scenario.getDescription().toText())
 
-    // TODO: move last run saving to engine
-    scenario.getLastRun().forEach {
+    worker.getLastRun().forEach {
         println(it.description)
     }
 
-    val bpScenario = ExampleScenario(
-        mutableMapOf(
-            "abonent" to Abonent("erf156-15edyu-98wer7"),
-            "action" to Action("quiz"),
-        )
-    )
-
+    worker.consume<ExampleScenario>(mutableMapOf(
+        "abonent" to Abonent("erf156-15edyu-98wer7"),
+        "action" to Action("quiz"),
+    ))
     println("\n\n")
-    println(bpScenario.getDescription().toText())
+    println(worker.scenario.getDescription().toText())
 
-    worker.consume(bpScenario)
     worker.startScenario()
 }

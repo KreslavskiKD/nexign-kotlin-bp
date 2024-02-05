@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":nexign-kotlin-bp-dsl"))
     implementation(project(":nexign-kotlin-bp-dsl-scenarios"))
     testImplementation(kotlin("test"))
+    implementation(kotlin("reflect"))
 }
 
 tasks.test {
