@@ -17,7 +17,9 @@ fun interface Operation {
         return if (this.javaClass.simpleName != "") {
             this.javaClass.simpleName
         } else {
-            this.javaClass.name
+            val longName = this.javaClass.name
+            val list = longName.split("$")
+            list[list.size - 2]
         }
     }
 

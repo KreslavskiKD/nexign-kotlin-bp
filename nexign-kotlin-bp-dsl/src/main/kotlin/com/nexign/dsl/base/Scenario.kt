@@ -2,10 +2,12 @@ package com.nexign.dsl.base
 
 import com.nexign.dsl.base.description.ScenarioDescription
 import com.nexign.dsl.base.specification.Specification
+import com.nexign.dsl.base.transitions.SINGLE_ROUTE
 import com.nexign.dsl.base.transitions.START_EXECUTION
 import com.nexign.dsl.base.transitions.STOP_EXECUTION
+import com.nexign.dsl.base.transitions.TransitionCondition
 
-abstract class Scenario(store: MutableMap<String, Any>) {
+abstract class Scenario(store: MutableMap<String, Any>): Operation {
     open val specification : Specification = Specification()
 
     val storage: MutableMap<String, Any> = store
@@ -17,6 +19,11 @@ abstract class Scenario(store: MutableMap<String, Any>) {
     inline fun <reified T : Any> putInStorage(name: String, value: T) {
         storage[name] = value
     }
+
+    override fun run(scenario: Scenario): TransitionCondition {
+        return SINGLE_ROUTE
+    }
+
 
     fun getDescription() : ScenarioDescription {
         return specification.routing.getScenarioDescription(
