@@ -2,6 +2,7 @@ package com.nexign.dsl.scenarios.examples.bpscenario
 
 import com.nexign.dsl.base.*
 import com.nexign.dsl.base.specification.Specification
+import com.nexign.dsl.base.specification.errorRouting
 import com.nexign.dsl.base.specification.routing
 import com.nexign.dsl.base.specification.specification
 import com.nexign.dsl.base.transitions.NO
@@ -20,11 +21,10 @@ class ExampleScenario(store: MutableMap<String, Any>) : Scenario(store)  {
             })
         }
 
-        errorRouting = mutableMapOf(
-            activateAction to specialErrorHandling,
-            OperationDefault to defaultErrorHandling,
-            cancelActionActivation to specialErrorHandling,
-        )
+        errorRouting = errorRouting {
+            listOf(activateAction, cancelActionActivation) routesTo specialErrorHandling
+            OperationDefault routesTo defaultErrorHandling
+        }
     }
 
     companion object {
