@@ -24,8 +24,8 @@ class ExampleScenario(store: MutableMap<String, Any>) : Scenario(store)  {
         }
 
         errorRouting = errorRouting {
-            listOf(activateAction, cancelActionActivation) with ActionProblemsETC routesTo specialErrorHandling
-            OperationDefault with SomethingUnexpectedHappened routesTo defaultErrorHandling
+            listOf(activateAction, cancelActionActivation)  with ActionProblemsETC              routesTo specialErrorHandling
+            OperationDefault                                with SomethingUnexpectedHappened    routesTo defaultErrorHandling
         }
     }
 
