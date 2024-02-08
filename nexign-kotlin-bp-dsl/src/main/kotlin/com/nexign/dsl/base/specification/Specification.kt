@@ -11,7 +11,7 @@ class Specification {
     var routing : RoutingMap = RoutingMap()
 
     @SpecificationDSL
-    var errorRouting: MutableMap<Operation, Operation> = mutableMapOf()
+    var errorRouting: ErrorRoutingMap = ErrorRoutingMap()
 }
 
 fun specification(init: Specification.() -> Unit) : Specification {

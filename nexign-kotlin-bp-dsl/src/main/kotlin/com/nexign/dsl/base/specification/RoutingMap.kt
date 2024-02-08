@@ -90,7 +90,6 @@ class RoutingMap {
                         opsDescrs[op]?.transitions?.set(nop.key, opsDescrs[nop.value]!!)
                     }
                 }
-
             }
             currentOps = nextOps
             nextOps = mutableListOf()

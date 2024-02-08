@@ -12,7 +12,6 @@ class ArithmeticScenario(store: MutableMap<String, Any>) : Scenario(store) {
             start(validateOr binary {
                 yes(computeSquare next computePerimeter next printResults)
                 no(printError)
-
             })
         }
     }
