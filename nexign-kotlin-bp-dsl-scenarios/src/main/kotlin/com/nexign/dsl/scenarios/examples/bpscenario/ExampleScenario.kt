@@ -28,16 +28,6 @@ class ExampleScenario(store: MutableMap<String, Any>) : Scenario(store)  {
     }
 
     companion object {
-        val getAbonentInfo = GetAbonentInfo()
-        val checkAbonentActions = CheckAbonentActions()
-        val prolongAction = ProlongAction()
-        val activateAction = ActivateAction()
-        val writeOffMoney = WriteOffMoney()
-        val cancelActionActivation = CancelActionActivation()
-
-        val specialErrorHandling = SpecialErrorHandling()
-        val defaultErrorHandling = DefaultErrorHandling()
-
         val notifyAboutActionTimePeriod = NotifyAction("action time period")
     }
 }
