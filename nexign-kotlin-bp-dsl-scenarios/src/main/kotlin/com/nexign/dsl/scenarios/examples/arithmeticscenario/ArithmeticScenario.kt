@@ -9,9 +9,9 @@ class ArithmeticScenario(store: MutableMap<String, Any>) : Scenario(store) {
 
     override val specification: Specification = specification {
         routing = routing {
-            start(ValidateOr() binary {
-                yes(ComputeSquare() next ComputePerimeter() next PrintResults())
-                no(PrintError())
+            start(validateOr binary {
+                yes(computeSquare next computePerimeter next printResults)
+                no(printError)
             })
         }
     }
