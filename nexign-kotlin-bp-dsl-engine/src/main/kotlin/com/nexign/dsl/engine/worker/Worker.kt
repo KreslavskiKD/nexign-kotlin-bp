@@ -55,13 +55,8 @@ class Worker {
                     break
                 }
 
-                val nextOp =  if (error) {
-                    scenario.specification.errorRouting[currentOp]?.get(condition)
+                val nextOp = scenario.specification.routing[currentOp]?.get(condition)
                         ?: throw NoSuchOperationException()
-                } else {
-                    scenario.specification.routing[currentOp]?.get(condition)
-                        ?: throw NoSuchOperationException()
-                }
 
                 currentOp = nextOp
             }
