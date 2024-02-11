@@ -1,7 +1,7 @@
 package com.nexign.dsl.engine.worker
 
 import com.nexign.dsl.base.Operation
-import com.nexign.dsl.base.Scenario
+import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.exceptions.NoSuchOperationException
 import com.nexign.dsl.base.transitions.ErrorTransitionCondition
 import com.nexign.dsl.base.transitions.STOP_EXECUTION
@@ -38,7 +38,8 @@ class Worker {
                     logger.log("${currentOp.javaClass.simpleName} started")
                 }
 
-                val condition = currentOp.run(scenario)
+                val results = currentOp.run(scenario) // TODO: what should we do with the results here?
+                val condition = results.transitionCondition
 
                 error = when (condition) {
                     is ErrorTransitionCondition -> true

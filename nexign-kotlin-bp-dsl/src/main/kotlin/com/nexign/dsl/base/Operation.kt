@@ -1,10 +1,12 @@
 package com.nexign.dsl.base
 
 import com.nexign.dsl.base.description.OperationDescription
+import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.transitions.*
+import kotlin.reflect.KType
 
 fun interface Operation {
-    fun run(scenario: Scenario): TransitionCondition
+    fun run(scenario: Scenario): OperationResult
 
     fun getOperationDescription() : OperationDescription =
         OperationDescription(
@@ -26,7 +28,18 @@ fun interface Operation {
 }
 
 object OperationDefault : Operation {
-    override fun run(scenario: Scenario): TransitionCondition {
-        return STOP_EXECUTION
+    override fun run(scenario: Scenario): OperationResult {
+        return STOP_EXECUTION result None
     }
+}
+
+object None : Any()
+
+data class OperationResult (
+    val transitionCondition: TransitionCondition,
+    val result: Any,
+)
+
+infix fun <T: Any> TransitionCondition.result(result: T): OperationResult {
+    return OperationResult(this, result)
 }
