@@ -13,6 +13,10 @@ import com.nexign.dsl.base.transitions.START_EXECUTION
 import com.nexign.dsl.base.transitions.STOP_EXECUTION
 
 abstract class Scenario(open val input: Input): Operation {
+
+    // Not yet used but can be useful
+    constructor() : this(Input())
+
     open val specification : Specification = Specification()
 
     open val results: Results = Results()
