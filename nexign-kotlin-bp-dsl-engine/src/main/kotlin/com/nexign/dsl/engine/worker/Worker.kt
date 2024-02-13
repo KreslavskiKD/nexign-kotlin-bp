@@ -3,26 +3,24 @@ package com.nexign.dsl.engine.worker
 import com.nexign.dsl.base.Operation
 import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.exceptions.NoSuchOperationException
+import com.nexign.dsl.base.scenario.data.Input
 import com.nexign.dsl.base.transitions.ErrorTransitionCondition
 import com.nexign.dsl.base.transitions.STOP_EXECUTION
 import com.nexign.dsl.engine.logging.BasicWorkerLogger
 import com.nexign.dsl.engine.logging.Logger
 import com.nexign.dsl.engine.logging.RunStage
-import com.nexign.dsl.engine.storage.Storage
 import kotlin.reflect.full.primaryConstructor
 
 class Worker {
 
     // These fields are not private because we need the `consume` function to be inlined
     lateinit var scenario: Scenario
-    lateinit var params: Storage
     val logger: Logger = BasicWorkerLogger()
 
-    inline fun <reified T: Scenario> consume(params: MutableMap<String, Any>) {
+    inline fun <reified T: Scenario> consume(input: Input) {
         val constructor = T::class.primaryConstructor
         if (constructor != null) {
-            this.params = Storage(params, logger)
-            this.scenario = constructor.call(this.params)
+            this.scenario = constructor.call(input)
         }
     }
 
@@ -33,9 +31,9 @@ class Worker {
             var error = false
             while (currentOp != Scenario.end) {
                 if (error) {
-                    logger.log("error route: ${currentOp.javaClass.simpleName} started")
+                    logger.log("error route: ${currentOp.getOperationName()} started")
                 } else {
-                    logger.log("${currentOp.javaClass.simpleName} started")
+                    logger.log("${currentOp.getOperationName()} started")
                 }
 
                 val results = currentOp.run(scenario) // TODO: what should we do with the results here?
@@ -47,9 +45,9 @@ class Worker {
                 }
 
                 if (error) {
-                    logger.log("error handling route: ${currentOp.javaClass.simpleName} ended with transition condition ${condition.javaClass.simpleName}")
+                    logger.log("error handling route: ${currentOp.getOperationName()} ended with transition condition ${condition.javaClass.simpleName}")
                 } else {
-                    logger.log("${currentOp.javaClass.simpleName} ended with transition condition ${condition.javaClass.simpleName}")
+                    logger.log("${currentOp.getOperationName()} ended with transition condition ${condition.javaClass.simpleName}")
                 }
 
                 if (condition == STOP_EXECUTION) {

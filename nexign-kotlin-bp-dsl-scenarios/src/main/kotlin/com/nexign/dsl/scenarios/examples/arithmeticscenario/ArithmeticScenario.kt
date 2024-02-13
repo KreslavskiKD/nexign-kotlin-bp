@@ -15,7 +15,12 @@ data class ArithmeticInput(
     val b: Double,
 ) : Input()
 
-class ArithmeticScenario(private val input: ArithmeticInput) : Scenario(input) {
+data class ArithmeticResults(
+    var perimeter: Double,
+    var square: Double,
+) : Results()
+
+class ArithmeticScenario(override val input: ArithmeticInput) : Scenario(input) {
 
     override val specification: Specification = specification {
         routing = routing {
@@ -26,56 +31,74 @@ class ArithmeticScenario(private val input: ArithmeticInput) : Scenario(input) {
         }
     }
 
-    override val results = object : Results() {
-        var perimeter: Double = 0.0
-        var square: Double = 0.0
-    }
+    override val results = ArithmeticResults(0.0, 0.0)
 
-    private val computePerimeter = Operation {
-        val perimeter: Double = (input.a + input.b) * 2
-        SINGLE_ROUTE result perimeter
-    }
+    companion object {
+        val computePerimeter = Operation {
+            val input = it.input as ArithmeticInput
+            val results = it.results as ArithmeticResults
 
-    private val computeSquare = Operation {
-        val square: Double = (input.a * input.b)
-        SINGLE_ROUTE result square
-    }
-
-    private val validateOr = Operation {
-        var continueExecution: TransitionCondition = YES
-        try {
-            val a: Double = input.a
-            val b: Double = input.b
-            if (a < 3.0) {
-                throw IllegalScenarioArgumentException(Errors.BOUNDS_LESS_ERROR_A)
-            }
-            if (a > 42.0) {
-                throw IllegalScenarioArgumentException(Errors.BOUNDS_MORE_ERROR_A)
-            }
-            if (b < 3.0) {
-                throw IllegalScenarioArgumentException(Errors.BOUNDS_LESS_ERROR_B)
-            }
-            if (b > 42.0) {
-                throw IllegalScenarioArgumentException(Errors.BOUNDS_MORE_ERROR_B)
-            }
-        } catch (e: IllegalScenarioArgumentException) {
-            it.putInStorage("error", e.message!!)
-            continueExecution = NO
+            val perimeter: Double = (input.a + input.b) * 2
+            // this is one way to do it, not sure if it is the one preferred
+            results.perimeter = perimeter
+            //
+            SINGLE_ROUTE result perimeter
         }
-        continueExecution result None
-    }
 
-    private val printResults = Operation {
-        val square: Double = it.getFromStorage("square")
-        val perimeter: Double = it.getFromStorage("perimeter")
-        println("square = $square")
-        println("perimeter = $perimeter")
-        STOP_EXECUTION result None
-    }
+        private val computeSquare = Operation {
+            val input = it.input as ArithmeticInput
+            val results = it.results as ArithmeticResults
 
-    private val printError = Operation {
-        val error: String = it.getFromStorage("error")
-        println(error)
-        STOP_EXECUTION result None
+            val square: Double = (input.a * input.b)
+            // this is one way to do it, not sure if it is the one preferred
+            results.square = square
+            //
+            SINGLE_ROUTE result square
+        }
+
+        private val validateOr = Operation {
+            val input = it.input as ArithmeticInput
+            val results = it.results as ArithmeticResults
+
+            var continueExecution: TransitionCondition = YES
+            try {
+                val a: Double = input.a
+                val b: Double = input.b
+                if (a < 3.0) {
+                    throw IllegalScenarioArgumentException(Errors.BOUNDS_LESS_ERROR_A)
+                }
+                if (a > 42.0) {
+                    throw IllegalScenarioArgumentException(Errors.BOUNDS_MORE_ERROR_A)
+                }
+                if (b < 3.0) {
+                    throw IllegalScenarioArgumentException(Errors.BOUNDS_LESS_ERROR_B)
+                }
+                if (b > 42.0) {
+                    throw IllegalScenarioArgumentException(Errors.BOUNDS_MORE_ERROR_B)
+                }
+            } catch (e: IllegalScenarioArgumentException) {
+                results.error = e.message!!
+                continueExecution = NO
+            }
+            continueExecution result None
+        }
+
+        private val printResults = Operation {
+            val results = it.results as ArithmeticResults
+
+            val square: Double = results.square
+            val perimeter: Double = results.perimeter
+            println("square = $square")
+            println("perimeter = $perimeter")
+            STOP_EXECUTION result None
+        }
+
+        private val printError = Operation {
+            val results = it.results as ArithmeticResults
+
+            val error: String = results.error
+            println(error)
+            STOP_EXECUTION result None
+        }
     }
 }

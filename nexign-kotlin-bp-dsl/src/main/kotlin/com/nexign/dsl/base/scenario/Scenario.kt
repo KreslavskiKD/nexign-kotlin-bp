@@ -1,5 +1,6 @@
 package com.nexign.dsl.base.scenario
 
+import com.nexign.dsl.base.None
 import com.nexign.dsl.base.Operation
 import com.nexign.dsl.base.OperationResult
 import com.nexign.dsl.base.description.ScenarioDescription
@@ -11,7 +12,7 @@ import com.nexign.dsl.base.transitions.SINGLE_ROUTE
 import com.nexign.dsl.base.transitions.START_EXECUTION
 import com.nexign.dsl.base.transitions.STOP_EXECUTION
 
-abstract class Scenario(private val input: Input): Operation {
+abstract class Scenario(open val input: Input): Operation {
     open val specification : Specification = Specification()
 
     open val results: Results = Results()
@@ -30,11 +31,11 @@ abstract class Scenario(private val input: Input): Operation {
 
     companion object {
         val start: Operation = Operation {
-            return@Operation START_EXECUTION result null
+            return@Operation START_EXECUTION result None
         }
 
         val end: Operation = Operation {
-            return@Operation STOP_EXECUTION result null
+            return@Operation STOP_EXECUTION result None
         }
     }
 }

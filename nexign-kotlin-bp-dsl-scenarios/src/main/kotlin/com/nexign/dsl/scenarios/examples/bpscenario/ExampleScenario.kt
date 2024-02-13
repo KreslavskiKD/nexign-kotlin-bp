@@ -16,7 +16,7 @@ data class ExampleScenarioInput(
     val action: Action,
 ) : Input()
 
-class ExampleScenario(private val input: ExampleScenarioInput) : Scenario(input)  {
+class ExampleScenario(override val input: ExampleScenarioInput) : Scenario(input)  {
 
     override val specification: Specification = specification {
         routing = routing {
@@ -33,30 +33,6 @@ class ExampleScenario(private val input: ExampleScenarioInput) : Scenario(input)
         }
     }
 
-
-    private val getAbonentInfo = Operation {
-        // Do something
-        println("getting abonent action ${input.abonent.id}")
-        SINGLE_ROUTE result None
-    }
-
-    private val prolongAction = Operation {
-        // Do something
-        SINGLE_ROUTE result None
-    }
-
-    private val activateAction = Operation {
-        // Do something
-        println("activating action ${input.action.name}")
-        SINGLE_ROUTE result None
-    }
-
-    private val cancelActionActivation = Operation {
-        // Do something
-        println("cancelling action ${input.action.name} activation")
-        SINGLE_ROUTE result None
-    }
-
     open class NotifyAction(
         private val message: String,
     ) : Operation {
@@ -69,42 +45,73 @@ class ExampleScenario(private val input: ExampleScenarioInput) : Scenario(input)
         }
     }
 
-    private val checkAbonentActions = Operation {
-        var transitionCondition: TransitionCondition = YES
+    companion object {
+        private val getAbonentInfo = Operation {
+            val input = it.input as ExampleScenarioInput
 
-        // decision imitation
-        val isActionAlreadyActive: Boolean = Random.nextBoolean()
-        // Do something
-        if (isActionAlreadyActive) {
-            transitionCondition = NO
+            // Do something
+            println("getting abonent action ${input.abonent.id}")
+            SINGLE_ROUTE result None
         }
-        transitionCondition result None
-    }
 
-    private val writeOffMoney = Operation {
-        var transitionCondition: TransitionCondition = YES
-
-        // decision imitation
-        val isThereEnoughMoney: Boolean = Random.nextBoolean()
-        // Do something
-        if (isThereEnoughMoney) {
-            transitionCondition = NO
+        private val prolongAction = Operation {
+            // Do something
+            SINGLE_ROUTE result None
         }
-        transitionCondition result None
-    }
 
-    private val defaultErrorHandling = Operation {
-        val error: String = it.getFromStorage("error")
-        println(error)
-        STOP_EXECUTION result None
-    }
+        private val activateAction = Operation {
+            val input = it.input as ExampleScenarioInput
 
-    private val specialErrorHandling = Operation {
-        val error: String = it.getFromStorage("error")
-        println("Some super error handling: $error")
-        STOP_EXECUTION result None
-    }
+            // Do something
+            println("activating action ${input.action.name}")
+            SINGLE_ROUTE result None
+        }
 
-    private val notifyAboutActionTimePeriod = NotifyAction("action time period")
+        private val cancelActionActivation = Operation {
+            val input = it.input as ExampleScenarioInput
+
+            // Do something
+            println("cancelling action ${input.action.name} activation")
+            SINGLE_ROUTE result None
+        }
+
+        private val checkAbonentActions = Operation {
+            var transitionCondition: TransitionCondition = YES
+
+            // decision imitation
+            val isActionAlreadyActive: Boolean = Random.nextBoolean()
+            // Do something
+            if (isActionAlreadyActive) {
+                transitionCondition = NO
+            }
+            transitionCondition result None
+        }
+
+        private val writeOffMoney = Operation {
+            var transitionCondition: TransitionCondition = YES
+
+            // decision imitation
+            val isThereEnoughMoney: Boolean = Random.nextBoolean()
+            // Do something
+            if (isThereEnoughMoney) {
+                transitionCondition = NO
+            }
+            transitionCondition result None
+        }
+
+        private val defaultErrorHandling = Operation {
+            val error: String = it.results.error
+            println(error)
+            STOP_EXECUTION result None
+        }
+
+        private val specialErrorHandling = Operation {
+            val error: String = it.results.error
+            println("Some super error handling: $error")
+            STOP_EXECUTION result None
+        }
+
+        private val notifyAboutActionTimePeriod = NotifyAction("action time period")
+    }
 
 }

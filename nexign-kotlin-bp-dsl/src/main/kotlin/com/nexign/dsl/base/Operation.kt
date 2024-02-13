@@ -3,7 +3,6 @@ package com.nexign.dsl.base
 import com.nexign.dsl.base.description.OperationDescription
 import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.transitions.*
-import kotlin.reflect.KType
 
 fun interface Operation {
     fun run(scenario: Scenario): OperationResult
