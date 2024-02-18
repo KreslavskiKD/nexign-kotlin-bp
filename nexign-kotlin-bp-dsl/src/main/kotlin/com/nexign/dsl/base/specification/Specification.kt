@@ -1,7 +1,5 @@
 package com.nexign.dsl.base.specification
 
-import com.nexign.dsl.base.Operation
-
 @DslMarker
 annotation class SpecificationDSL
 
@@ -9,9 +7,6 @@ class Specification {
 
     @SpecificationDSL
     var routing : RoutingMap = RoutingMap()
-
-    @SpecificationDSL
-    var errorRouting: ErrorRoutingMap = ErrorRoutingMap()
 }
 
 fun specification(init: Specification.() -> Unit) : Specification {

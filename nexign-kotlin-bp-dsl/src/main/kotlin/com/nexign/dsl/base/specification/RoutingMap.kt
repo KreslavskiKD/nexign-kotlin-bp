@@ -102,6 +102,35 @@ class RoutingMap {
         )
     }
 
+    infix fun errorRouting(init: ErrorRoutingBuilder.() -> Unit): RoutingMap {
+        val erb = ErrorRoutingBuilder(this)
+        erb.init()
+        return this
+    }
+
+    class ErrorRoutingBuilder(private val routing: RoutingMap) {
+
+        infix fun <A : Pair<Operation, ErrorTransitionCondition>, B : Operation> A.routesTo(errorHandlingOperation: B) {
+            if (routing.specification[this.first] != null) {
+                routing.specification[this.first]?.set(this.second, errorHandlingOperation)
+            } else {
+                routing.specification[this.first] = mutableMapOf(this.second to errorHandlingOperation)
+            }
+        }
+
+        infix fun <A : Pair<List<Operation>, ErrorTransitionCondition>, B : Operation> A.togetherRoutesTo(errorHandlingOperation: B) {
+            for (op : Operation in this.first) {
+                if (routing.specification[op] != null) {
+                    routing.specification[op]?.set(this.second, errorHandlingOperation)
+                } else {
+                    routing.specification[op] = mutableMapOf(this.second to errorHandlingOperation)
+                }
+            }
+        }
+
+        infix fun <A, B : ErrorTransitionCondition> A.with(that: B): Pair<A, B> = Pair(this, that)
+    }
+
     private fun Operation.getLastOperationInRow() : Operation {
         return if (specification[this@getLastOperationInRow] == null) {
             this@getLastOperationInRow
@@ -126,7 +155,6 @@ fun routing(init: RoutingMap.() -> Unit) : RoutingMap {
     spec.init()
     return spec
 }
-
 
 class BinaryChoice {
     lateinit var yesOperation: Operation

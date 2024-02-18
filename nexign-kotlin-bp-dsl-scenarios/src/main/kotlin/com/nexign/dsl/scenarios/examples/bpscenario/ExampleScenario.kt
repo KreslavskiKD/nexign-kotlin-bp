@@ -2,10 +2,11 @@ package com.nexign.dsl.scenarios.examples.bpscenario
 
 import com.nexign.dsl.base.*
 import com.nexign.dsl.base.specification.Specification
-import com.nexign.dsl.base.specification.errorRouting
 import com.nexign.dsl.base.specification.routing
 import com.nexign.dsl.base.specification.specification
+import com.nexign.dsl.base.transitions.ActionProblemsETC
 import com.nexign.dsl.base.transitions.NO
+import com.nexign.dsl.base.transitions.SomethingUnexpectedHappened
 import com.nexign.dsl.base.transitions.YES
 
 class ExampleScenario(store: MutableMap<String, Any>) : Scenario(store)  {
@@ -19,11 +20,9 @@ class ExampleScenario(store: MutableMap<String, Any>) : Scenario(store)  {
                     +(NO to (NotifyAction("action activation") next notifyAboutActionTimePeriod))
                 })
             })
-        }
-
-        errorRouting = errorRouting {
-            listOf(activateAction, cancelActionActivation) routesTo specialErrorHandling
-            OperationDefault routesTo defaultErrorHandling
+        } errorRouting {
+            listOf(activateAction, cancelActionActivation)  with ActionProblemsETC              togetherRoutesTo specialErrorHandling
+            OperationDefault                                with SomethingUnexpectedHappened    routesTo defaultErrorHandling
         }
     }
 
