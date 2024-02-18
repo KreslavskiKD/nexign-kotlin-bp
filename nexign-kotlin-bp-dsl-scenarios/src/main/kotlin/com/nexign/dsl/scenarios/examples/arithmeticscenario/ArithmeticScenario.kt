@@ -24,10 +24,16 @@ class ArithmeticScenario(override val input: ArithmeticInput) : Scenario(input) 
 
     override val specification: Specification = specification {
         routing = routing {
-            start(validateOr binary {
-                yes(computeSquare next computePerimeter next printResults)
-                no(printError)
-            })
+            -validateOr binary {
+                yes = route {
+                    -computeSquare
+                    -computePerimeter
+                    -printResults
+                }
+                no = route {
+                    -printError
+                }
+            }
         }
     }
 

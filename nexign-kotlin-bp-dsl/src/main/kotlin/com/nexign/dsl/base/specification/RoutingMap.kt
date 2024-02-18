@@ -18,49 +18,7 @@ class RoutingMap {
         return specification[operation] as Map<TransitionCondition, Operation>
     }
 
-    infix fun Operation.next(operation: Operation) : Operation {
-        val lastOp = this@next.getLastOperationInRow()
-
-        if (specification[lastOp] == null) {
-            specification[lastOp] = mutableMapOf()
-        }
-
-        specification[lastOp]?.put(SINGLE_ROUTE, operation)
-        return this@next
-    }
-
-    infix fun Operation.binary(init: BinaryChoice.() -> Unit) : Operation {
-        val binaryChoice = BinaryChoice()
-        binaryChoice.init()
-
-        val lastOp = this@binary.getLastOperationInRow()
-
-        if (specification[lastOp] == null) {
-            specification[lastOp] = mutableMapOf()
-        }
-
-        specification[lastOp]?.put(YES, binaryChoice.yesOperation)
-        specification[lastOp]?.put(NO, binaryChoice.noOperation)
-        return this@binary
-    }
-
-    infix fun Operation.multiple(init: MultipleChoiceBuilder.() -> Unit) : Operation {
-        val mc = MultipleChoiceBuilder()
-        mc.init()
-
-        val lastOp = this@multiple.getLastOperationInRow()
-
-        if (specification[lastOp] == null) {
-            specification[lastOp] = mutableMapOf()
-        }
-
-        for (p in mc.choices) {
-            specification[lastOp]?.put(p.first, p.second)
-        }
-        return this@multiple
-    }
-
-    fun start(operation: Operation) {
+    private fun start(operation: Operation) {
         specification[Scenario.start] = mutableMapOf(
             START_EXECUTION to operation
         )
@@ -108,6 +66,29 @@ class RoutingMap {
         return this
     }
 
+    fun buildBlock(block: RoutingBlockBuilder, operation: Operation = Scenario.start) {
+        if (operation == Scenario.start) {
+            this.start(block.route[0])
+        } else {
+            if (specification[operation] != null) {
+                specification[operation]?.set(SINGLE_ROUTE, block.route[0])
+            } else {
+                specification[operation] = mutableMapOf(SINGLE_ROUTE to operation)
+            }
+        }
+
+        var prev = block.route[0]
+        for (i in 1 until block.route.size) {
+            val cur = block.route[i]
+            if (specification[prev] != null) {
+                specification[prev]?.set(SINGLE_ROUTE, cur)
+            } else {
+                specification[prev] = mutableMapOf(SINGLE_ROUTE to cur)
+            }
+            prev = cur
+        }
+    }
+
     class ErrorRoutingBuilder(private val routing: RoutingMap) {
 
         infix fun <A : Pair<Operation, ErrorTransitionCondition>, B : Operation> A.routesTo(errorHandlingOperation: B) {
@@ -131,52 +112,70 @@ class RoutingMap {
         infix fun <A, B : ErrorTransitionCondition> A.with(that: B): Pair<A, B> = Pair(this, that)
     }
 
-    private fun Operation.getLastOperationInRow() : Operation {
-        return if (specification[this@getLastOperationInRow] == null) {
-            this@getLastOperationInRow
-        } else if (specification[this@getLastOperationInRow]?.get(SINGLE_ROUTE) == null) {
-            this@getLastOperationInRow
-        } else {
-            var curLastOp = specification[this@getLastOperationInRow]?.get(SINGLE_ROUTE)
-            var nextOp = specification[curLastOp]?.get(SINGLE_ROUTE)
+    class RoutingBlockBuilder(private val routingMap: RoutingMap) {
+        val route = mutableListOf<Operation>()
 
-            while (nextOp != null) {
-                curLastOp = nextOp
-                nextOp = specification[curLastOp]?.get(SINGLE_ROUTE)
+        operator fun Operation.unaryMinus(): Operation {
+            route += this
+            return this
+        }
+
+        infix fun Operation.binary(init: BinaryChoice.() -> Unit) : Operation {
+            val binaryChoice = BinaryChoice(routingMap)
+            binaryChoice.init()
+            binaryChoice.build()
+
+            if (routingMap.specification[this] == null) {
+                routingMap.specification[this] = mutableMapOf()
             }
 
-            curLastOp!!
+            routingMap.specification[this]?.put(YES, binaryChoice.yes.route[0])
+            routingMap.specification[this]?.put(NO, binaryChoice.no.route[0])
+            return this@binary
+        }
+
+        infix fun Operation.multiple(init: MultipleChoiceBuilder.() -> Unit) : Operation {
+            val mc = MultipleChoiceBuilder(routingMap)
+            mc.init()
+
+            if (routingMap.specification[this] == null) {
+                routingMap.specification[this] = mutableMapOf()
+            }
+
+            for (p in mc.choices) {
+                routingMap.specification[this]?.put(p.first, p.second)
+            }
+            return this@multiple
         }
     }
+
+    class BinaryChoice(private val routingMap: RoutingMap) {
+        lateinit var yes: RoutingBlockBuilder
+        lateinit var no: RoutingBlockBuilder
+
+        fun build() {
+            routingMap.buildBlock(yes)
+            routingMap.buildBlock(no)
+        }
+
+        fun route(init: RoutingBlockBuilder.() -> Unit) : RoutingBlockBuilder
+                = RoutingBlockBuilder(routingMap).apply(init)
+    }
+
+    class MultipleChoiceBuilder(private val routingMap: RoutingMap) {
+        val choices = mutableListOf<Pair<TransitionCondition, Operation>>()
+
+        operator fun Pair<TransitionCondition, RoutingBlockBuilder>.unaryPlus() {
+            routingMap.buildBlock(this.second)
+            choices += Pair(this.first, this.second.route[0])
+        }
+    }
+
 }
 
-fun routing(init: RoutingMap.() -> Unit) : RoutingMap {
-    val spec = RoutingMap()
-    spec.init()
-    return spec
-}
-
-class BinaryChoice {
-    lateinit var yesOperation: Operation
-    lateinit var noOperation: Operation
-
-    fun yes(op: Operation) {
-        yesOperation = op
-    }
-
-    fun no(op: Operation) {
-        noOperation = op
-    }
-}
-
-class MultipleChoiceBuilder {
-    val choices = mutableListOf<Pair<TransitionCondition, Operation>>()
-
-    operator fun Pair<TransitionCondition, Operation>.unaryPlus() {
-        choices += this
-    }
-
-    operator fun Pair<Int, Operation>.unaryMinus() {
-        choices += Pair(NumberedTCMap.getNumberedTC(this.first), this.second)
-    }
+fun routing(init: RoutingMap.RoutingBlockBuilder.() -> Unit) : RoutingMap {
+    val rmap = RoutingMap()
+    val block = RoutingMap.RoutingBlockBuilder(rmap).apply(init)
+    rmap.buildBlock(block)
+    return rmap
 }
