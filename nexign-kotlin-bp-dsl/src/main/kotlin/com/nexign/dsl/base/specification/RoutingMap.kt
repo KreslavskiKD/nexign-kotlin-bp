@@ -1,7 +1,7 @@
 package com.nexign.dsl.base.specification
 
 import com.nexign.dsl.base.Operation
-import com.nexign.dsl.base.Scenario
+import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.description.OperationDescription
 import com.nexign.dsl.base.description.ScenarioDescription
 import com.nexign.dsl.base.transitions.*
