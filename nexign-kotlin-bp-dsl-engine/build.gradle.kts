@@ -15,6 +15,8 @@ dependencies {
     implementation(project(":nexign-kotlin-bp-dsl-scenarios"))
     testImplementation(kotlin("test"))
     implementation(kotlin("reflect"))
+
+    implementation("com.github.ajalt.clikt:clikt:4.2.2")
 }
 
 tasks.test {

@@ -9,6 +9,7 @@ import com.nexign.dsl.base.transitions.STOP_EXECUTION
 import com.nexign.dsl.engine.logging.BasicWorkerLogger
 import com.nexign.dsl.engine.logging.Logger
 import com.nexign.dsl.engine.logging.RunStage
+import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
 class Worker {
@@ -19,6 +20,13 @@ class Worker {
 
     inline fun <reified T: Scenario> consume(input: Input) {
         val constructor = T::class.primaryConstructor
+        if (constructor != null) {
+            this.scenario = constructor.call(input)
+        }
+    }
+
+    fun <T : Scenario> consume(input: Input, clazz: KClass<T>) {
+        val constructor = clazz.primaryConstructor
         if (constructor != null) {
             this.scenario = constructor.call(input)
         }
