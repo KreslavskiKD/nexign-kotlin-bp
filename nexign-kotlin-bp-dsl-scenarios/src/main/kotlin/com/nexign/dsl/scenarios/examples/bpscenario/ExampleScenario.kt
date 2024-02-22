@@ -20,13 +20,28 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario(input
 
     override val specification: Specification = specification {
         routing = routing {
-            start(getAbonentInfo next checkAbonentActions binary {
-                yes(prolongAction next notifyAboutActionTimePeriod next end)
-                no(activateAction next writeOffMoney multiple {
-                    +(YES to (cancelActionActivation next NotifyAction("error when activating action") next end))
-                    +(NO to (NotifyAction("action activation") next notifyAboutActionTimePeriod))
-                })
-            })
+            -getAbonentInfo
+            -checkAbonentActions binary {
+                yes = route {
+                    -prolongAction
+                    -notifyAboutActionTimePeriod
+                    -end
+                }
+                no = route {
+                    -activateAction
+                    -writeOffMoney multiple {
+                        +(YES to route {
+                            -cancelActionActivation
+                            -NotifyAction("error when activating action")
+                            -end
+                        })
+                        +(NO to route {
+                            -NotifyAction("action activation")
+                            -notifyAboutActionTimePeriod
+                        })
+                    }
+                }
+            }
         } errorRouting {
             listOf(activateAction, cancelActionActivation)  with ActionProblemsETC              togetherRoutesTo specialErrorHandling
             OperationDefault                                with SomethingUnexpectedHappened    routesTo defaultErrorHandling

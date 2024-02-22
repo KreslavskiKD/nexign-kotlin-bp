@@ -23,7 +23,6 @@ fun interface Operation {
             list[list.size - 2]
         }
     }
-
 }
 
 object OperationDefault : Operation {
