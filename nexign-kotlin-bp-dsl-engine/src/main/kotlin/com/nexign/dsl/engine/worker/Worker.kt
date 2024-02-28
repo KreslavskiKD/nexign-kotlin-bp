@@ -18,21 +18,15 @@ class Worker {
     lateinit var scenario: Scenario
     val logger: Logger = BasicWorkerLogger()
 
-    inline fun <reified T: Scenario> consume(input: Input) {
-        val constructor = T::class.primaryConstructor
-        if (constructor != null) {
-            this.scenario = constructor.call(input)
-        }
-    }
-
-    fun <T : Scenario> consume(input: Input, clazz: KClass<T>) {
+    fun consume(input: Input, clazz: KClass<out Scenario>) {
         val constructor = clazz.primaryConstructor
+
         if (constructor != null) {
             this.scenario = constructor.call(input)
         }
     }
 
-    fun startScenario() {
+    suspend fun startScenario() {
         var currentOp : Operation = Scenario.start
         try {
             logger.clear()

@@ -3,8 +3,11 @@ package com.nexign.dsl.engine.commands
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
+import com.nexign.dsl.engine.Application
 
-class StartScenarioCommand : CliktCommand(
+class StartScenarioCommand(
+    private val application: Application,
+) : CliktCommand(
     name = "start-scenario",
     help = """
         Starts a specified scenario.

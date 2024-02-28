@@ -1,7 +1,13 @@
 package com.nexign.dsl.base.scenario.data
 
-open class Input
+interface Input {}
 
-open class Results {
-    lateinit var error: String
+interface Results {
+    var error: String
+}
+
+class EmptyInput : Input
+
+class DefaultResult : Results {
+    override var error: String = ""
 }
