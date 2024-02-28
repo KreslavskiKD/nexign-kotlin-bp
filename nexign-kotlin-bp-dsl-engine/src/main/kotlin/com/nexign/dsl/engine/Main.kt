@@ -1,12 +1,6 @@
 package com.nexign.dsl.engine
 
-import com.nexign.dsl.engine.worker.Worker
-import com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput
-import com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario
-import com.nexign.dsl.scenarios.examples.bpscenario.ExampleScenario
-import com.nexign.dsl.scenarios.examples.bpscenario.ExampleScenarioInput
-import com.nexign.dsl.scenarios.examples.bpscenario.mock.Abonent
-import com.nexign.dsl.scenarios.examples.bpscenario.mock.Action
+
 
 
 //fun main(args: Array<String>) {
