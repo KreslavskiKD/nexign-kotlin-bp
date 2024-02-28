@@ -14,9 +14,8 @@ import kotlin.reflect.full.primaryConstructor
 
 class Worker {
 
-    // These fields are not private because we need the `consume` function to be inlined
-    lateinit var scenario: Scenario
-    val logger: Logger = BasicWorkerLogger()
+    private lateinit var scenario: Scenario
+    private val logger: Logger = BasicWorkerLogger()
 
     fun consume(input: Input, clazz: KClass<out Scenario>) {
         val constructor = clazz.primaryConstructor
