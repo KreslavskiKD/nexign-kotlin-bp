@@ -26,13 +26,6 @@ class Worker {
         }
     }
 
-    fun <T : Scenario> consume(input: Input, clazz: KClass<T>) {
-        val constructor = clazz.primaryConstructor
-        if (constructor != null) {
-            this.scenario = constructor.call(input)
-        }
-    }
-
     suspend fun startScenario() {
         var currentOp : Operation = Scenario.start
         try {
