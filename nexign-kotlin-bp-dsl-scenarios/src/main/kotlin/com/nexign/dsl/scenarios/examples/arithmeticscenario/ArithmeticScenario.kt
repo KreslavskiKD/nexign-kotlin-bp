@@ -13,12 +13,13 @@ import com.nexign.dsl.base.scenario.data.Results
 data class ArithmeticInput(
     val a: Double,
     val b: Double,
-) : Input()
+) : Input
 
 data class ArithmeticResults(
     var perimeter: Double,
     var square: Double,
-) : Results()
+    override var error: String,
+) : Results
 
 class ArithmeticScenario(override val input: ArithmeticInput) : Scenario(input) {
 
@@ -37,7 +38,11 @@ class ArithmeticScenario(override val input: ArithmeticInput) : Scenario(input) 
         }
     }
 
-    override val results = ArithmeticResults(0.0, 0.0)
+    override val results = ArithmeticResults(
+        perimeter = 0.0,
+        square = 0.0,
+        error = ""
+    )
 
     companion object {
         val computePerimeter = Operation {

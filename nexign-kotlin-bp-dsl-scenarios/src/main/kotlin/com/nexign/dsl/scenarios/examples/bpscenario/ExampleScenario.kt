@@ -14,7 +14,7 @@ import kotlin.random.Random
 data class ExampleScenarioInput(
     val abonent: Abonent,
     val action: Action,
-) : Input()
+) : Input
 
 class ExampleScenario(override val input: ExampleScenarioInput) : Scenario(input)  {
 
