@@ -7,44 +7,44 @@ import com.nexign.dsl.base.specification.Specification
 import com.nexign.dsl.base.specification.routing
 import com.nexign.dsl.base.specification.specification
 import com.nexign.dsl.base.transitions.*
-import com.nexign.dsl.scenarios.examples.bpscenario.mock.Abonent
-import com.nexign.dsl.scenarios.examples.bpscenario.mock.Action
+import com.nexign.dsl.scenarios.examples.bpscenario.mock.Subscriber
+import com.nexign.dsl.scenarios.examples.bpscenario.mock.Promotion
 import kotlin.random.Random
 
 data class ExampleScenarioInput(
-    val abonent: Abonent,
-    val action: Action,
+    val subscriber: Subscriber,
+    val promotion: Promotion,
 ) : Input
 
 class ExampleScenario(override val input: ExampleScenarioInput) : Scenario(input)  {
 
     override val specification: Specification = specification {
         routing = routing {
-            -getAbonentInfo
-            -checkAbonentActions binary {
+            -getSubscriberInfo
+            -checkSubscriberPromotions binary {
                 yes = route {
-                    -prolongAction
-                    -notifyAboutActionTimePeriod
+                    -prolongPromotion
+                    -notifyAboutPromotionTimePeriod
                     -end
                 }
                 no = route {
-                    -activateAction
+                    -activatePromotion
                     -writeOffMoney multiple {
                         +(YES to route {
-                            -cancelActionActivation
-                            -NotifyAction("error when activating action")
+                            -cancelPromotionActivation
+                            -NotifyAction("error when activating promotion")
                             -end
                         })
                         +(NO to route {
-                            -NotifyAction("action activation")
-                            -notifyAboutActionTimePeriod
+                            -NotifyAction("promotion activation")
+                            -notifyAboutPromotionTimePeriod
                         })
                     }
                 }
             }
         } errorRouting {
-            listOf(activateAction, cancelActionActivation)  with ActionProblemsETC              togetherRoutesTo specialErrorHandling
-            OperationDefault                                with SomethingUnexpectedHappened    routesTo defaultErrorHandling
+            listOf(activatePromotion, cancelPromotionActivation)  with ActionProblemsETC              togetherRoutesTo specialErrorHandling
+            OperationDefault                                      with SomethingUnexpectedHappened    routesTo defaultErrorHandling
         }
     }
 
@@ -61,36 +61,36 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario(input
     }
 
     companion object {
-        private val getAbonentInfo = Operation {
+        private val getSubscriberInfo = Operation {
             val input = it.input as ExampleScenarioInput
 
             // Do something
-            println("getting abonent action ${input.abonent.id}")
+            println("getting abonent action ${input.subscriber.id}")
             SINGLE_ROUTE result None
         }
 
-        private val prolongAction = Operation {
+        private val prolongPromotion = Operation {
             // Do something
             SINGLE_ROUTE result None
         }
 
-        private val activateAction = Operation {
+        private val activatePromotion = Operation {
             val input = it.input as ExampleScenarioInput
 
             // Do something
-            println("activating action ${input.action.name}")
+            println("activating action ${input.promotion.name}")
             SINGLE_ROUTE result None
         }
 
-        private val cancelActionActivation = Operation {
+        private val cancelPromotionActivation = Operation {
             val input = it.input as ExampleScenarioInput
 
             // Do something
-            println("cancelling action ${input.action.name} activation")
+            println("cancelling action ${input.promotion.name} activation")
             SINGLE_ROUTE result None
         }
 
-        private val checkAbonentActions = Operation {
+        private val checkSubscriberPromotions = Operation {
             var transitionCondition: TransitionCondition = YES
 
             // decision imitation
@@ -126,7 +126,7 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario(input
             STOP_EXECUTION result None
         }
 
-        private val notifyAboutActionTimePeriod = NotifyAction("action time period")
+        private val notifyAboutPromotionTimePeriod = NotifyAction("action time period")
     }
 
 }
