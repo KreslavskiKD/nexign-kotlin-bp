@@ -52,7 +52,7 @@ class Engine : CliktCommand(
             throw IllegalArgumentException("scenarios-dir should be a directory")
         }
 
-        application = Application(scenariosDir)
+        application = Application(scenariosDir, moshi)
 
         while (true) {
             val input = readln()

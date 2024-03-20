@@ -4,15 +4,17 @@ import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.scenario.data.Input
 import com.nexign.dsl.engine.transport.ScenarioRequest
 import com.nexign.dsl.engine.worker.Worker
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
-import kotlin.reflect.full.primaryConstructor
 
 class Application(
     private val scenariosDirectory: File,
+    private val moshi: Moshi,
 ) {
     private val scope = CoroutineScope(Dispatchers.Default)
 
@@ -45,14 +47,14 @@ class Application(
                 val inputClazz = classLoader.loadClass(scenarioRequest.inputClassName)
 
                 if (!inputClazz.isAssignableFrom(Input::class.java)) {
-                    throw IllegalArgumentException("it is not an Input class") // TODO change to custom
+                    throw IllegalArgumentException("${inputClazz.name} is not an Input class") // TODO change to custom
                 }
 
-                val constructor = inputClazz.kotlin.primaryConstructor
-                    ?: throw Exception("constructor not found") // TODO change to custom
+                val jsonAdapter: JsonAdapter<out Input> = moshi.adapter(inputClazz) as JsonAdapter<out Input>
 
                 worker.consume(
-                    input = constructor.call(*scenarioRequest.inputConstructorParameters.toTypedArray()) as Input,
+                    input = jsonAdapter.nullSafe().serializeNulls().fromJson(scenarioRequest.input)
+                        ?: throw IllegalArgumentException("it is not an instance of provided ${inputClazz.name}"),  // TODO change to custom
                     clazz = scenarioClazz.kotlin as KClass<out Scenario>,   // Unchecked cast is verified before
                 )
 
@@ -72,6 +74,6 @@ class Application(
     fun gracefulStop() {
         stopping = true
         println("Engine is stopping")
-        // TODO here probably should be saving the scenarios states, when this feature will be done
+        // TODO here probably should be saving the scenarios states, when this feature will be done ENGINE-8
     }
 }
