@@ -1,9 +1,9 @@
 package com.nexign.dsl.scenarios.examples.bpscenario.mock
 
-data class Abonent(
+data class Subscriber(
     var id: String
 )
 
-data class Action(
+data class Promotion(
     var name: String
 )
