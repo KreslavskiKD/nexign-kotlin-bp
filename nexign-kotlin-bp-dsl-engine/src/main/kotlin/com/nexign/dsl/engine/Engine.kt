@@ -70,15 +70,17 @@ class Engine : CliktCommand(
             if (input == "start scenario") {
                 val jsonLine = readln()
 
-                val scenarioRequest = jsonAdapter.nullSafe().serializeNulls().fromJson(jsonLine)
+                try {
+                    val scenarioRequest = jsonAdapter.nullSafe().serializeNulls().fromJson(jsonLine)
 
-                if (scenarioRequest != null) {
-                    application.startScenario(scenarioRequest)
-                } else {
-                    throw JsonDataException("scenario request failed to parse or is null")
+                    if (scenarioRequest != null) {
+                        application.startScenario(scenarioRequest)
+                    } else {
+                        throw JsonDataException("scenario request failed to parse or is null")
+                    }
+                } catch (e: Exception) {
+                    println(e.message) // TODO: Make some better handling
                 }
-
-
             }
         }
 

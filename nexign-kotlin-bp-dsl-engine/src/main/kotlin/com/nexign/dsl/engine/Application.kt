@@ -40,22 +40,24 @@ class Application(
 
                 val scenarioClazz = classLoader.loadClass(scenarioRequest.scenarioClassName)
 
-                if (!scenarioClazz.isAssignableFrom(Scenario::class.java)) {
-                    throw IllegalArgumentException("it is not a Scenario class") // TODO change to custom
-                }
+                // TODO FIX
+//                if (!scenarioClazz.isAssignableFrom(Scenario::class.java)) {
+//                    throw IllegalArgumentException("it is not a Scenario class") // TODO change to custom
+//                }
 
                 val inputClazz = classLoader.loadClass(scenarioRequest.inputClassName)
 
-                if (!inputClazz.isAssignableFrom(Input::class.java)) {
-                    throw IllegalArgumentException("${inputClazz.name} is not an Input class") // TODO change to custom
-                }
+                // TODO FIX
+//                if (!inputClazz.isAssignableFrom(Input::class.java)) {
+//                    throw IllegalArgumentException("${inputClazz.name} is not an Input class") // TODO change to custom
+//                }
 
                 val jsonAdapter: JsonAdapter<out Input> = moshi.adapter(inputClazz) as JsonAdapter<out Input>
 
                 worker.consume(
                     input = jsonAdapter.nullSafe().serializeNulls().fromJson(scenarioRequest.input)
                         ?: throw IllegalArgumentException("it is not an instance of provided ${inputClazz.name}"),  // TODO change to custom
-                    clazz = scenarioClazz.kotlin as KClass<out Scenario>,   // Unchecked cast is verified before
+                    clazz = scenarioClazz.kotlin as KClass<out Scenario>,   // Unchecked cast is verified before TODO
                 )
 
                 worker.startScenario()
