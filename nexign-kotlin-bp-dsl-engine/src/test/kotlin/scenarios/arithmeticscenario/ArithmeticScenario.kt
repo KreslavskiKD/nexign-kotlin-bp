@@ -1,4 +1,4 @@
-package com.nexign.dsl.scenarios.examples.arithmeticscenario
+package scenarios.arithmeticscenario
 
 import com.nexign.dsl.base.exceptions.IllegalScenarioArgumentException
 import com.nexign.dsl.base.scenario.Scenario
@@ -9,6 +9,7 @@ import com.nexign.dsl.base.transitions.*
 import com.nexign.dsl.base.*
 import com.nexign.dsl.base.scenario.data.Input
 import com.nexign.dsl.base.scenario.data.Results
+import com.nexign.dsl.scenarios.examples.arithmeticscenario.Errors
 
 data class ArithmeticInput(
     val a: Double,
