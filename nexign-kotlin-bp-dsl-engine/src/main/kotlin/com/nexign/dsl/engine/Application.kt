@@ -2,6 +2,7 @@ package com.nexign.dsl.engine
 
 import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.scenario.data.Input
+import com.nexign.dsl.engine.exceptions.NexignBpIllegalClassProvidedException
 import com.nexign.dsl.engine.transport.ScenarioRequest
 import com.nexign.dsl.engine.worker.Worker
 import com.squareup.moshi.JsonAdapter
@@ -11,6 +12,7 @@ import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
+import kotlin.reflect.full.isSubclassOf
 
 class Application(
     private val scenariosDirectory: File,
@@ -40,24 +42,22 @@ class Application(
 
                 val scenarioClazz = classLoader.loadClass(scenarioRequest.scenarioClassName)
 
-                // TODO FIX
-//                if (!scenarioClazz.isAssignableFrom(Scenario::class.java)) {
-//                    throw IllegalArgumentException("it is not a Scenario class") // TODO change to custom
-//                }
+                if (!scenarioClazz.kotlin.isSubclassOf(Scenario::class)) {
+                    throw NexignBpIllegalClassProvidedException("it is not a Scenario class")
+                }
 
                 val inputClazz = classLoader.loadClass(scenarioRequest.inputClassName)
 
-                // TODO FIX
-//                if (!inputClazz.isAssignableFrom(Input::class.java)) {
-//                    throw IllegalArgumentException("${inputClazz.name} is not an Input class") // TODO change to custom
-//                }
+                if (!inputClazz.kotlin.isSubclassOf(Input::class)) {
+                    throw NexignBpIllegalClassProvidedException("${inputClazz.name} is not an Input class")
+                }
 
                 val jsonAdapter: JsonAdapter<out Input> = moshi.adapter(inputClazz) as JsonAdapter<out Input>
 
                 worker.consume(
                     input = jsonAdapter.nullSafe().serializeNulls().fromJson(scenarioRequest.input)
-                        ?: throw IllegalArgumentException("it is not an instance of provided ${inputClazz.name}"),  // TODO change to custom
-                    clazz = scenarioClazz.kotlin as KClass<out Scenario>,   // Unchecked cast is verified before TODO
+                        ?: throw NexignBpIllegalClassProvidedException("it is not an instance of provided ${inputClazz.name}"),
+                    clazz = scenarioClazz.kotlin as KClass<out Scenario>,   // Unchecked cast is verified before
                 )
 
                 worker.startScenario()
