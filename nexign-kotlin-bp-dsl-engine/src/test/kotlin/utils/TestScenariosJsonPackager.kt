@@ -1,8 +1,9 @@
 package utils
 
-import com.nexign.dsl.engine.transport.ScenarioRequest
+import com.nexign.dsl.engine.models.response.DescriptionType
+import com.nexign.dsl.engine.models.response.ScenarioDescriptionRm
+import com.nexign.dsl.engine.models.response.ScenarioStartRm
 import scenarios.arithmeticscenario.ArithmeticInput
-import scenarios.arithmeticscenario.ArithmeticScenario
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
@@ -13,14 +14,17 @@ import kotlin.test.Test
 internal class TestScenariosJsonPackager {
     val moshi: Moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
     @OptIn(ExperimentalStdlibApi::class)
-    val jsonAdapter: JsonAdapter<ScenarioRequest> = moshi.adapter<ScenarioRequest>()
+    val startScenarioJsonAdapter: JsonAdapter<ScenarioStartRm> = moshi.adapter<ScenarioStartRm>()
 
     @OptIn(ExperimentalStdlibApi::class)
     val inputJsonAdapter: JsonAdapter<ArithmeticInput> = moshi.adapter<ArithmeticInput>()
 
+    @OptIn(ExperimentalStdlibApi::class)
+    val scenarioDescriptionJsonAdapter: JsonAdapter<ScenarioDescriptionRm> = moshi.adapter<ScenarioDescriptionRm>()
+
     @Test
-    fun printArithmeticScenarioJson() {
-        val request = ScenarioRequest(
+    fun printStartArithmeticScenarioJson() {
+        val request = ScenarioStartRm(
             scenarioClassName = "com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario",
             inputClassName = "com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput",
             input = inputJsonAdapter.toJson(ArithmeticInput(
@@ -29,7 +33,40 @@ internal class TestScenariosJsonPackager {
             )),
         )
 
-        val requestJson = jsonAdapter.toJson(request)
+        val requestJson = startScenarioJsonAdapter.toJson(request)
+        println(requestJson)
+    }
+
+    @Test
+    fun printArithmeticScenarioTextDescriptionJson() {
+        val request = ScenarioDescriptionRm(
+            scenarioClassName = "com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario",
+            descriptionType = DescriptionType.TEXT,
+        )
+
+        val requestJson = scenarioDescriptionJsonAdapter.toJson(request)
+        println(requestJson)
+    }
+
+    @Test
+    fun printArithmeticScenarioDotDescriptionJson() {
+        val request = ScenarioDescriptionRm(
+            scenarioClassName = "com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario",
+            descriptionType = DescriptionType.DOT_FILE,
+        )
+
+        val requestJson = scenarioDescriptionJsonAdapter.toJson(request)
+        println(requestJson)
+    }
+
+    @Test
+    fun printArithmeticScenarioPictureDescriptionJson() {
+        val request = ScenarioDescriptionRm(
+            scenarioClassName = "com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario",
+            descriptionType = DescriptionType.PICTURE,
+        )
+
+        val requestJson = scenarioDescriptionJsonAdapter.toJson(request)
         println(requestJson)
     }
 }

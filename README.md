@@ -15,4 +15,4 @@
 
 ## License 
 
-MIT License, more info in [LICENSE](/LICENSE) file.
+Code and documentation released under the MIT license. Copyright © 2024-2024, Kreslavski Kirill.

@@ -34,6 +34,14 @@ data class ScenarioDescription (
 
         return sb.toString()
     }
+
+    fun toDot(): String {
+        TODO()
+    }
+
+    fun toPicture(): String {
+        TODO()
+    }
 }
 
 data class OperationDescription (

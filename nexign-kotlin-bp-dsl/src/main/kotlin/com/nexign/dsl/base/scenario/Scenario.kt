@@ -5,7 +5,6 @@ import com.nexign.dsl.base.Operation
 import com.nexign.dsl.base.OperationResult
 import com.nexign.dsl.base.description.ScenarioDescription
 import com.nexign.dsl.base.result
-import com.nexign.dsl.base.scenario.data.DefaultResult
 import com.nexign.dsl.base.scenario.data.EmptyInput
 import com.nexign.dsl.base.scenario.data.Input
 import com.nexign.dsl.base.scenario.data.Results
@@ -20,23 +19,23 @@ abstract class Scenario(open val input: Input): Operation {
     @SuppressWarnings("unused")
     constructor() : this(EmptyInput())
 
-    open val specification : Specification = Specification()
+    abstract val specification : Specification
 
-    open val results: Results = DefaultResult()
+    abstract val results: Results
 
     override fun run(scenario: Scenario): OperationResult {
         return SINGLE_ROUTE result results
     }
 
-    fun getDescription() : ScenarioDescription {
-        return specification.routing.getScenarioDescription(
-
-            scenarioName = this::class.java.simpleName,
-            scenarioDetailedDescription = "" // TODO: here should be some logic to get details from e.g. KDoc
-        )
-    }
-
     companion object {
+        fun getDescription(specification: Specification, scenarioName: String) : ScenarioDescription {
+            return specification.routing.getScenarioDescription(
+
+                scenarioName = scenarioName, //::class.java.simpleName
+                scenarioDetailedDescription = "" // TODO: here should be some logic to get details from e.g. KDoc
+            )
+        }
+
         val start: Operation = Operation {
             return@Operation START_EXECUTION result None
         }
