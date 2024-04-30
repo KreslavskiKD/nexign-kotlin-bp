@@ -2,7 +2,9 @@ package com.nexign.dsl.scenarios.examples.bpscenario
 
 import com.nexign.dsl.base.*
 import com.nexign.dsl.base.scenario.Scenario
+import com.nexign.dsl.base.scenario.data.DefaultResult
 import com.nexign.dsl.base.scenario.data.Input
+import com.nexign.dsl.base.scenario.data.Results
 import com.nexign.dsl.base.specification.Specification
 import com.nexign.dsl.base.specification.routing
 import com.nexign.dsl.base.specification.specification
@@ -47,6 +49,8 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario(input
             OperationDefault                                      with SomethingUnexpectedHappened    routesTo defaultErrorHandling
         }
     }
+
+    override val results: Results = DefaultResult()
 
     open class NotifyAction(
         private val message: String,

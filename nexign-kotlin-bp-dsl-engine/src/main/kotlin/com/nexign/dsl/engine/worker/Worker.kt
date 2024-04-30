@@ -2,7 +2,7 @@ package com.nexign.dsl.engine.worker
 
 import com.nexign.dsl.base.Operation
 import com.nexign.dsl.base.scenario.Scenario
-import com.nexign.dsl.base.exceptions.NoSuchOperationException
+import com.nexign.dsl.base.exceptions.NexignBpNoSuchOperationException
 import com.nexign.dsl.base.scenario.data.Input
 import com.nexign.dsl.base.transitions.ErrorTransitionCondition
 import com.nexign.dsl.base.transitions.STOP_EXECUTION
@@ -56,7 +56,7 @@ class Worker {
                 }
 
                 val nextOp = scenario.specification.routing[currentOp]?.get(condition)
-                        ?: throw NoSuchOperationException()
+                        ?: throw NexignBpNoSuchOperationException("No operation from $currentOp in case of condition $condition")
 
                 currentOp = nextOp
             }

@@ -15,10 +15,6 @@ import com.nexign.dsl.base.transitions.STOP_EXECUTION
 
 abstract class Scenario(open val input: Input): Operation {
 
-    // Not yet used but can be useful
-    @SuppressWarnings("unused")
-    constructor() : this(EmptyInput())
-
     abstract val specification : Specification
 
     abstract val results: Results
@@ -27,11 +23,14 @@ abstract class Scenario(open val input: Input): Operation {
         return SINGLE_ROUTE result results
     }
 
+    public fun getDescription(): ScenarioDescription {
+        return getDescription(this.specification, this::class.java.simpleName)
+    }
+
     companion object {
         fun getDescription(specification: Specification, scenarioName: String) : ScenarioDescription {
             return specification.routing.getScenarioDescription(
-
-                scenarioName = scenarioName, //::class.java.simpleName
+                scenarioName = scenarioName,
                 scenarioDetailedDescription = "" // TODO: here should be some logic to get details from e.g. KDoc
             )
         }

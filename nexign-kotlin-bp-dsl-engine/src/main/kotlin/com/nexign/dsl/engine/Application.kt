@@ -2,7 +2,7 @@ package com.nexign.dsl.engine
 
 import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.scenario.data.Input
-import com.nexign.dsl.engine.exceptions.NexignBpIllegalClassProvidedException
+import com.nexign.dsl.base.exceptions.NexignBpIllegalClassProvidedException
 import com.nexign.dsl.engine.models.response.DescriptionType
 import com.nexign.dsl.engine.models.response.ScenarioDescriptionRm
 import com.nexign.dsl.engine.models.response.ScenarioStartRm
@@ -14,8 +14,8 @@ import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.full.primaryConstructor
 
 class Application(
     private val scenariosDirectory: File,
@@ -80,10 +80,26 @@ class Application(
             val scenarioClazz = classLoader.loadClass(descriptionRequest.scenarioClassName)
 
             if (!scenarioClazz.kotlin.isSubclassOf(Scenario::class)) {
-                throw NexignBpIllegalClassProvidedException("it is not a Scenario class")
+                throw NexignBpIllegalClassProvidedException("${scenarioClazz.name} is not a Scenario class")
             }
 
-            val description = Scenario.getDescription(specification = scenarioClazz.kotlin., scenarioName = scenarioClazz.simpleName)
+            val inputClazz = classLoader.loadClass(descriptionRequest.inputClassName)
+
+            if (!inputClazz.kotlin.isSubclassOf(Input::class)) {
+                throw NexignBpIllegalClassProvidedException("${inputClazz.name} is not an Input class")
+            }
+
+            val jsonAdapter: JsonAdapter<out Input> = moshi.adapter(inputClazz) as JsonAdapter<out Input>
+
+            val input = jsonAdapter.nullSafe().serializeNulls().fromJson(descriptionRequest.dummyInput)
+            ?: throw NexignBpIllegalClassProvidedException("it is not an instance of provided ${inputClazz.name}")
+
+            val constructor = scenarioClazz.kotlin.primaryConstructor
+                ?: throw NexignBpIllegalClassProvidedException("No primary constructor for class ${scenarioClazz.name}")
+
+            val scenario = constructor.call(input) as Scenario
+
+            val description = scenario.getDescription()
 
             result = when (descriptionRequest.descriptionType) {
                 DescriptionType.TEXT -> {

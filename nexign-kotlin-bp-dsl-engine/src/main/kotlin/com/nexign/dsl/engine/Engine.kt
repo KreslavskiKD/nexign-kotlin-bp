@@ -14,6 +14,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.runBlocking
 import java.io.File
+import java.nio.file.Paths
 
 class Engine : CliktCommand(
     help = """
@@ -26,7 +27,9 @@ class Engine : CliktCommand(
         help = """
         Directory where scenarios JARs are stored
         """.trimIndent()
-    ).file().default(defaultScenariosDir)
+    ).file().default(
+        File(Paths.get("").toAbsolutePath().toString() + defaultScenariosDir)
+    )
 
     // TODO
     private val restService: Int by option("-r", "--rest-port",
@@ -107,7 +110,7 @@ class Engine : CliktCommand(
     }
 
     companion object {
-        val defaultScenariosDir: File = File("./scenarios") // TODO check if that's OK
+        const val defaultScenariosDir = "./scenarios"
     }
 
 }

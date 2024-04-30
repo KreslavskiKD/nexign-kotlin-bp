@@ -1,6 +1,6 @@
 package com.nexign.dsl.scenarios.examples.arithmeticscenario
 
-import com.nexign.dsl.base.exceptions.IllegalScenarioArgumentException
+import com.nexign.dsl.base.exceptions.NexignBpIllegalScenarioArgumentException
 import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.specification.Specification
 import com.nexign.dsl.base.specification.routing
@@ -76,18 +76,18 @@ class ArithmeticScenario(override val input: ArithmeticInput) : Scenario(input) 
                 val a: Double = input.a
                 val b: Double = input.b
                 if (a < 3.0) {
-                    throw IllegalScenarioArgumentException(Errors.BOUNDS_LESS_ERROR_A)
+                    throw NexignBpIllegalScenarioArgumentException(Errors.BOUNDS_LESS_ERROR_A)
                 }
                 if (a > 42.0) {
-                    throw IllegalScenarioArgumentException(Errors.BOUNDS_MORE_ERROR_A)
+                    throw NexignBpIllegalScenarioArgumentException(Errors.BOUNDS_MORE_ERROR_A)
                 }
                 if (b < 3.0) {
-                    throw IllegalScenarioArgumentException(Errors.BOUNDS_LESS_ERROR_B)
+                    throw NexignBpIllegalScenarioArgumentException(Errors.BOUNDS_LESS_ERROR_B)
                 }
                 if (b > 42.0) {
-                    throw IllegalScenarioArgumentException(Errors.BOUNDS_MORE_ERROR_B)
+                    throw NexignBpIllegalScenarioArgumentException(Errors.BOUNDS_MORE_ERROR_B)
                 }
-            } catch (e: IllegalScenarioArgumentException) {
+            } catch (e: NexignBpIllegalScenarioArgumentException) {
                 results.error = e.message!!
                 continueExecution = NO
             }

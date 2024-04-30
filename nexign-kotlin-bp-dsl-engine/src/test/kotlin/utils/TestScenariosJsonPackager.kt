@@ -41,6 +41,11 @@ internal class TestScenariosJsonPackager {
     fun printArithmeticScenarioTextDescriptionJson() {
         val request = ScenarioDescriptionRm(
             scenarioClassName = "com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario",
+            inputClassName = "com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput",
+            dummyInput = inputJsonAdapter.toJson(ArithmeticInput(
+                a = 12.0,
+                b = 5.5,
+            )),
             descriptionType = DescriptionType.TEXT,
         )
 
@@ -52,6 +57,11 @@ internal class TestScenariosJsonPackager {
     fun printArithmeticScenarioDotDescriptionJson() {
         val request = ScenarioDescriptionRm(
             scenarioClassName = "com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario",
+            inputClassName = "com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput",
+            dummyInput = inputJsonAdapter.toJson(ArithmeticInput(
+                a = 12.0,
+                b = 5.5,
+            )),
             descriptionType = DescriptionType.DOT_FILE,
         )
 
@@ -63,6 +73,11 @@ internal class TestScenariosJsonPackager {
     fun printArithmeticScenarioPictureDescriptionJson() {
         val request = ScenarioDescriptionRm(
             scenarioClassName = "com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario",
+            inputClassName = "com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput",
+            dummyInput = inputJsonAdapter.toJson(ArithmeticInput(
+                a = 12.0,
+                b = 5.5,
+            )),
             descriptionType = DescriptionType.PICTURE,
         )
 
