@@ -13,6 +13,11 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+
+    implementation("org.apache.logging.log4j:log4j-api:2.23.1")
+    implementation("org.apache.logging.log4j:log4j-core:2.23.1")
+
+    implementation("guru.nidi:graphviz-java-all-j2v8:0.18.1")
 }
 
 tasks.test {

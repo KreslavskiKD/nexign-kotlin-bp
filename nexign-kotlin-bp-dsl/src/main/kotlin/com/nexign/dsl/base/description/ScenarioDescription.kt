@@ -2,6 +2,12 @@ package com.nexign.dsl.base.description
 
 import com.nexign.dsl.base.OperationDefault
 import com.nexign.dsl.base.transitions.*
+import guru.nidi.graphviz.engine.Format
+import guru.nidi.graphviz.engine.Graphviz
+import guru.nidi.graphviz.model.MutableGraph
+import guru.nidi.graphviz.parse.Parser
+import java.io.File
+
 
 data class ScenarioDescription (
     val scenarioName: String,
@@ -103,7 +109,12 @@ data class ScenarioDescription (
 
 
     fun toPicture(showErrorRouting: ErrorRoutingShowState): String {
-        TODO()
+        val dot = toDot(showErrorRouting)
+        val path = "example/$scenarioName.png"
+
+        val g: MutableGraph = Parser().read(dot)
+        Graphviz.fromGraph(g).width(700).render(Format.PNG).toFile(File(path))
+        return path
     }
 }
 
