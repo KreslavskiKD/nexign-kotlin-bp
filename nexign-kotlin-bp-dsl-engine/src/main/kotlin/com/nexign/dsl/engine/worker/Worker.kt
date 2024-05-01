@@ -1,11 +1,13 @@
 package com.nexign.dsl.engine.worker
 
 import com.nexign.dsl.base.Operation
+import com.nexign.dsl.base.OperationDefault
 import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.exceptions.NexignBpNoSuchOperationException
 import com.nexign.dsl.base.scenario.data.Input
 import com.nexign.dsl.base.transitions.ErrorTransitionCondition
 import com.nexign.dsl.base.transitions.STOP_EXECUTION
+import com.nexign.dsl.base.transitions.SomethingUnexpectedHappened
 import com.nexign.dsl.engine.logging.BasicWorkerLogger
 import com.nexign.dsl.engine.logging.Logger
 import com.nexign.dsl.engine.logging.RunStage
@@ -61,6 +63,16 @@ class Worker {
                 currentOp = nextOp
             }
         } catch (e: Exception) {
+            if (scenario.specification.routing[OperationDefault] != null && scenario.specification.routing[OperationDefault]?.isNotEmpty() == true) {
+                val errorHandlingOp = scenario.specification.routing[OperationDefault]?.get(SomethingUnexpectedHappened)
+                    ?: throw e
+
+                logger.log("default error handling route:\n exception happened:\n${e.message}\nstarted default handling with operation ${errorHandlingOp.javaClass.simpleName}")
+                val results = errorHandlingOp.run(scenario) // TODO: what should we do with the results here?
+                return
+            }
+
+
             logger.log("Caught exception during routing: ${e.message}")
             throw e
         }

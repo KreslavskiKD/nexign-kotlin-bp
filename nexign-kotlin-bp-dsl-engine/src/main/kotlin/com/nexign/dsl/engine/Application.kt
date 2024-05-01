@@ -1,9 +1,9 @@
 package com.nexign.dsl.engine
 
+import com.nexign.dsl.base.description.DescriptionType
 import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.scenario.data.Input
 import com.nexign.dsl.base.exceptions.NexignBpIllegalClassProvidedException
-import com.nexign.dsl.engine.models.response.DescriptionType
 import com.nexign.dsl.engine.models.response.ScenarioDescriptionRm
 import com.nexign.dsl.engine.models.response.ScenarioStartRm
 import com.nexign.dsl.engine.worker.Worker
@@ -103,15 +103,15 @@ class Application(
 
             result = when (descriptionRequest.descriptionType) {
                 DescriptionType.TEXT -> {
-                    description.toText()
+                    description.toText(descriptionRequest.addErrorRouting)
                 }
 
                 DescriptionType.DOT_FILE -> {
-                    description.toDot()
+                    description.toDot(descriptionRequest.addErrorRouting)
                 }
 
                 DescriptionType.PICTURE -> {
-                    description.toPicture()
+                    description.toPicture(descriptionRequest.addErrorRouting)
                 }
             }
         }

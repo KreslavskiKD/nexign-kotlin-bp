@@ -1,6 +1,7 @@
-package utils
+package utils.manual_testing
 
-import com.nexign.dsl.engine.models.response.DescriptionType
+import com.nexign.dsl.base.description.DescriptionType
+import com.nexign.dsl.base.description.ErrorRoutingShowState
 import com.nexign.dsl.engine.models.response.ScenarioDescriptionRm
 import com.nexign.dsl.engine.models.response.ScenarioStartRm
 import scenarios.arithmeticscenario.ArithmeticInput
@@ -46,6 +47,7 @@ internal class TestScenariosJsonPackager {
                 a = 12.0,
                 b = 5.5,
             )),
+            addErrorRouting = ErrorRoutingShowState.NO,
             descriptionType = DescriptionType.TEXT,
         )
 
@@ -62,6 +64,7 @@ internal class TestScenariosJsonPackager {
                 a = 12.0,
                 b = 5.5,
             )),
+            addErrorRouting = ErrorRoutingShowState.NO,
             descriptionType = DescriptionType.DOT_FILE,
         )
 
@@ -78,6 +81,7 @@ internal class TestScenariosJsonPackager {
                 a = 12.0,
                 b = 5.5,
             )),
+            addErrorRouting = ErrorRoutingShowState.NO,
             descriptionType = DescriptionType.PICTURE,
         )
 
