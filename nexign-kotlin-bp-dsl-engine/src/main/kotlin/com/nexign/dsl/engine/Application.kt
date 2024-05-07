@@ -4,6 +4,7 @@ import com.nexign.dsl.base.description.DescriptionType
 import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.scenario.data.Input
 import com.nexign.dsl.base.exceptions.NexignBpIllegalClassProvidedException
+import com.nexign.dsl.base.specification.Specification
 import com.nexign.dsl.engine.models.response.ScenarioDescriptionRm
 import com.nexign.dsl.engine.models.response.ScenarioStartRm
 import com.nexign.dsl.engine.worker.Worker
@@ -11,9 +12,12 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import java.io.File
+import java.lang.reflect.Field
 import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 
@@ -83,23 +87,10 @@ class Application(
                 throw NexignBpIllegalClassProvidedException("${scenarioClazz.name} is not a Scenario class")
             }
 
-            val inputClazz = classLoader.loadClass(descriptionRequest.inputClassName)
-
-            if (!inputClazz.kotlin.isSubclassOf(Input::class)) {
-                throw NexignBpIllegalClassProvidedException("${inputClazz.name} is not an Input class")
-            }
-
-            val jsonAdapter: JsonAdapter<out Input> = moshi.adapter(inputClazz) as JsonAdapter<out Input>
-
-            val input = jsonAdapter.nullSafe().serializeNulls().fromJson(descriptionRequest.dummyInput)
-            ?: throw NexignBpIllegalClassProvidedException("it is not an instance of provided ${inputClazz.name}")
-
-            val constructor = scenarioClazz.kotlin.primaryConstructor
-                ?: throw NexignBpIllegalClassProvidedException("No primary constructor for class ${scenarioClazz.name}")
-
-            val scenario = constructor.call(input) as Scenario
-
-            val description = scenario.getDescription()
+            val specificationField: Field = scenarioClazz.getDeclaredField("specification")
+            specificationField.setAccessible(true)
+            val specification = specificationField.get(null) as Specification
+            val description = Scenario.getDescription(scenarioClazz.simpleName, specification)
 
             result = when (descriptionRequest.descriptionType) {
                 DescriptionType.TEXT -> {

@@ -23,21 +23,6 @@ data class ArithmeticResults(
 
 class ArithmeticScenario(override val input: ArithmeticInput) : Scenario(input) {
 
-    override val specification: Specification = specification {
-        routing = routing {
-            -validateOr binary {
-                yes = route {
-                    -computeSquare
-                    -computePerimeter
-                    -printResults
-                }
-                no = route {
-                    -printError
-                }
-            }
-        }
-    }
-
     override val results = ArithmeticResults(
         perimeter = 0.0,
         square = 0.0,
@@ -45,7 +30,22 @@ class ArithmeticScenario(override val input: ArithmeticInput) : Scenario(input) 
     )
 
     companion object {
-        val computePerimeter = Operation {
+        val specification: Specification = specification {
+            routing = routing {
+                -validateOr binary {
+                    yes = route {
+                        -computeSquare
+                        -computePerimeter
+                        -printResults
+                    }
+                    no = route {
+                        -printError
+                    }
+                }
+            }
+        }
+
+        private val computePerimeter = Operation {
             val input = it.input as ArithmeticInput
             val results = it.results as ArithmeticResults
 
