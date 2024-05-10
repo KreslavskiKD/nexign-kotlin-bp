@@ -5,6 +5,7 @@ import com.nexign.dsl.base.OperationDefault
 import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.exceptions.NexignBpNoSuchOperationException
 import com.nexign.dsl.base.scenario.data.Input
+import com.nexign.dsl.base.specification.Specifiable
 import com.nexign.dsl.base.transitions.ErrorTransitionCondition
 import com.nexign.dsl.base.transitions.STOP_EXECUTION
 import com.nexign.dsl.base.transitions.SomethingUnexpectedHappened
@@ -17,6 +18,7 @@ import kotlin.reflect.full.primaryConstructor
 class Worker {
 
     private lateinit var scenario: Scenario
+    private lateinit var clazz: KClass<out Scenario>
     private val logger: Logger = BasicWorkerLogger()
 
     fun consume(input: Input, clazz: KClass<out Scenario>) {
@@ -24,11 +26,14 @@ class Worker {
 
         if (constructor != null) {
             this.scenario = constructor.call(input)
+            this.clazz = clazz
         }
     }
 
     suspend fun startScenario() {
         var currentOp : Operation = Scenario.start
+        val specification = (clazz.java.cast(scenario) as Specifiable).specification()
+
         try {
             logger.clear()
             var error = false
@@ -57,14 +62,14 @@ class Worker {
                     break
                 }
 
-                val nextOp = scenario.getSpecification().routing[currentOp]?.get(condition)
+                val nextOp: Operation = specification.routing[currentOp]?.get(condition)
                         ?: throw NexignBpNoSuchOperationException("No operation from $currentOp in case of condition $condition")
 
                 currentOp = nextOp
             }
         } catch (e: Exception) {
-            if (scenario.getSpecification().routing[OperationDefault] != null && scenario.getSpecification().routing[OperationDefault]?.isNotEmpty() == true) {
-                val errorHandlingOp = scenario.getSpecification().routing[OperationDefault]?.get(SomethingUnexpectedHappened)
+            if (specification.routing[OperationDefault] != null && specification.routing[OperationDefault]?.isNotEmpty() == true) {
+                val errorHandlingOp = specification.routing[OperationDefault]?.get(SomethingUnexpectedHappened)
                     ?: throw e
 
                 logger.log("default error handling route:\n exception happened:\n${e.message}\nstarted default handling with operation ${errorHandlingOp.javaClass.simpleName}")

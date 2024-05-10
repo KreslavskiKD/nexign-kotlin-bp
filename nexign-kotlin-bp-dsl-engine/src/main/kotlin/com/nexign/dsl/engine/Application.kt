@@ -4,6 +4,7 @@ import com.nexign.dsl.base.description.DescriptionType
 import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.scenario.data.Input
 import com.nexign.dsl.base.exceptions.NexignBpIllegalClassProvidedException
+import com.nexign.dsl.base.specification.Specifiable
 import com.nexign.dsl.base.specification.Specification
 import com.nexign.dsl.engine.models.response.ScenarioDescriptionRm
 import com.nexign.dsl.engine.models.response.ScenarioStartRm
@@ -12,14 +13,13 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.*
 import java.io.File
-import java.lang.reflect.Field
 import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObject
-import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
 
 class Application(
     private val scenariosDirectory: File,
@@ -83,13 +83,16 @@ class Application(
         val job = scope.launch {
             val scenarioClazz = classLoader.loadClass(descriptionRequest.scenarioClassName)
 
-            if (!scenarioClazz.kotlin.isSubclassOf(Scenario::class)) {
-                throw NexignBpIllegalClassProvidedException("${scenarioClazz.name} is not a Scenario class")
-            }
+            validateClassIsScenarioClassWithSpecification(scenarioClazz)
 
-            val specificationField: Field = scenarioClazz.getDeclaredField("specification")
-            specificationField.setAccessible(true)
-            val specification = specificationField.get(null) as Specification
+            val specificationMethod = scenarioClazz.kotlin.companionObject!!.members.stream()
+                .filter{ it.name == "specification" }
+                .findFirst()
+                .get()
+
+            specificationMethod.isAccessible = true
+
+            val specification = specificationMethod.call(scenarioClazz.kotlin.companionObjectInstance) as Specification
             val description = Scenario.getDescription(scenarioClazz.simpleName, specification)
 
             result = when (descriptionRequest.descriptionType) {
@@ -121,5 +124,23 @@ class Application(
         stopping = true
         println("Engine is stopping")
         // TODO here probably should be saving the scenarios states, when this feature will be done ENGINE-8
+    }
+
+    private fun validateClassIsScenarioClassWithSpecification(clazz: Class<*>?) {
+        if (clazz == null) {
+            throw NexignBpIllegalClassProvidedException("Could not load Scenario class")
+        }
+
+        if (!clazz.kotlin.isSubclassOf(Scenario::class)) {
+            throw NexignBpIllegalClassProvidedException("${clazz.name} is not a Scenario class")
+        }
+
+        if (clazz.kotlin.companionObject == null) {
+            throw NexignBpIllegalClassProvidedException("${clazz.name} does not have a companion object")
+        }
+
+        if (!clazz.kotlin.companionObject!!.isSubclassOf(Specifiable::class)) {
+            throw NexignBpIllegalClassProvidedException("${clazz.name} companion object is not Specifiable")
+        }
     }
 }

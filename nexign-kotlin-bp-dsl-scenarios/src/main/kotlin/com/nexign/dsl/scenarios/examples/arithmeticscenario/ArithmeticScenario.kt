@@ -2,13 +2,13 @@ package com.nexign.dsl.scenarios.examples.arithmeticscenario
 
 import com.nexign.dsl.base.exceptions.NexignBpIllegalScenarioArgumentException
 import com.nexign.dsl.base.scenario.Scenario
-import com.nexign.dsl.base.specification.Specification
 import com.nexign.dsl.base.specification.routing
 import com.nexign.dsl.base.specification.specification
 import com.nexign.dsl.base.transitions.*
 import com.nexign.dsl.base.*
 import com.nexign.dsl.base.scenario.data.Input
 import com.nexign.dsl.base.scenario.data.Results
+import com.nexign.dsl.base.specification.Specifiable
 
 data class ArithmeticInput(
     val a: Double,
@@ -21,7 +21,7 @@ data class ArithmeticResults(
     override var error: String,
 ) : Results
 
-class ArithmeticScenario(override val input: ArithmeticInput) : Scenario(input) {
+class ArithmeticScenario(override val input: ArithmeticInput) : Scenario() {
 
     override val results = ArithmeticResults(
         perimeter = 0.0,
@@ -29,8 +29,8 @@ class ArithmeticScenario(override val input: ArithmeticInput) : Scenario(input) 
         error = ""
     )
 
-    companion object {
-        val specification: Specification = specification {
+    companion object : Specifiable {
+        override fun specification() = specification {
             routing = routing {
                 -validateOr binary {
                     yes = route {

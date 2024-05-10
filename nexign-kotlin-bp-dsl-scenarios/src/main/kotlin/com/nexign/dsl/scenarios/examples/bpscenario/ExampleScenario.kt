@@ -5,6 +5,7 @@ import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.scenario.data.DefaultResult
 import com.nexign.dsl.base.scenario.data.Input
 import com.nexign.dsl.base.scenario.data.Results
+import com.nexign.dsl.base.specification.Specifiable
 import com.nexign.dsl.base.specification.Specification
 import com.nexign.dsl.base.specification.routing
 import com.nexign.dsl.base.specification.specification
@@ -18,7 +19,7 @@ data class ExampleScenarioInput(
     val promotion: Promotion,
 ) : Input
 
-class ExampleScenario(override val input: ExampleScenarioInput) : Scenario(input)  {
+class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
 
     override val results: Results = DefaultResult()
 
@@ -34,8 +35,8 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario(input
         }
     }
 
-    companion object {
-        val specification: Specification = specification {
+    companion object: Specifiable {
+        override fun specification(): Specification = specification {
             routing = routing {
                 -getSubscriberInfo
                 -checkSubscriberPromotions binary {

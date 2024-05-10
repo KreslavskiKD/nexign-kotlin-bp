@@ -12,20 +12,18 @@ import com.nexign.dsl.base.transitions.SINGLE_ROUTE
 import com.nexign.dsl.base.transitions.START_EXECUTION
 import com.nexign.dsl.base.transitions.STOP_EXECUTION
 
-abstract class Scenario(open val input: Input): Operation {
+abstract class Scenario: Operation {
 
+    abstract val input: Input
     abstract val results: Results
 
     override fun run(scenario: Scenario): OperationResult {
         return SINGLE_ROUTE result results
     }
 
-    fun getSpecification(): Specification = specification
-
     companion object {
-        val specification : Specification = Specification()
 
-        fun getDescription(scenarioName: String, specification: Specification = this.specification) : ScenarioDescription {
+        fun getDescription(scenarioName: String, specification: Specification) : ScenarioDescription {
             return specification.routing.getScenarioDescription(
                 scenarioName = scenarioName,
                 scenarioDetailedDescription = "" // TODO: here should be some logic to get details from e.g. KDoc
