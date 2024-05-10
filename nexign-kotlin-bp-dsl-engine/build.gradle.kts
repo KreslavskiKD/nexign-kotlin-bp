@@ -8,6 +8,7 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    jcenter()       // for kanary
 }
 
 dependencies {
@@ -17,7 +18,8 @@ dependencies {
 
     implementation(kotlin("reflect"))
     implementation("com.github.ajalt.clikt:clikt:4.2.2")                // for CLI
-    implementation("com.squareup.moshi:moshi-kotlin:1.15.0")            // for json parsing
+    implementation("com.iyanuadelekan:kanary:0.9.2")                    // for REST API
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.0")            // for JSON parsing
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
 }
 
