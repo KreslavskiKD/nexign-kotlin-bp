@@ -22,14 +22,14 @@ You can use the following commands:
  TBD https://github.com/KreslavskiKD/nexign-kotlin-bp/issues/33
 
 ### Test JSONs for `ArithmeticScenario`
-For `start` command
+For `start scenario` command
 ```json
 {"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","inputClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput","input":"{\"a\":12.0,\"b\":5.5}"}
 ```
 
 For `get description` command
 ```json
-{"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","inputClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput","dummyInput":"{\"a\":12.0,\"b\":5.5}","descriptionType":"PICTURE","addErrorRouting":"NO"}
+{"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","descriptionType":"PICTURE","addErrorRouting":"NO"}
 ```
 
 [comment]: <> (kotlin -cp nexign-kotlin-bp-dsl-engine-1.0-SNAPSHOT.jar com.nexign.dsl.engine.Main -s /mnt/d/_Kira/Higher_School_of_Economics/_Nexign_graduation_work/tryout/jars)
