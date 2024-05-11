@@ -20,6 +20,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.nio.file.Paths
+import javax.servlet.http.HttpServletRequest
 
 class Engine : CliktCommand(
     help = """
@@ -58,6 +59,12 @@ class Engine : CliktCommand(
     @OptIn(ExperimentalStdlibApi::class)
     private val descriptionRequestJsonAdapter: JsonAdapter<ScenarioDescriptionRm> = moshi.adapter<ScenarioDescriptionRm>()
 
+    private val requestLogger: (HttpServletRequest?) -> Unit = {
+        if(it != null && it.method != null && it.pathInfo != null) {
+            println("Started ${it.scheme} ${it.method} request to: '${it.pathInfo}'")
+        }
+    }
+
     override fun run() {
         println("Scenarios directory: $scenariosDir")
 
@@ -70,7 +77,7 @@ class Engine : CliktCommand(
         if (testEngine) {
             runTestEngine()
         } else {
-            runRestService()
+            runRestService(scenarioRequestJsonAdapter, descriptionRequestJsonAdapter)
         }
     }
 
@@ -92,7 +99,9 @@ class Engine : CliktCommand(
                         val scenarioRequest = scenarioRequestJsonAdapter.nullSafe().serializeNulls().fromJson(jsonLine)
 
                         if (scenarioRequest != null) {
-                            application.startScenario(scenarioRequest)
+                            runBlocking {
+                                application.startScenario(scenarioRequest)
+                            }
                         } else {
                             throw JsonDataException("scenario request failed to parse or is null")
                         }
@@ -139,7 +148,7 @@ class Engine : CliktCommand(
                 - `force stop` - stops the Engine and all scenarios ungracefully
                 - `get description` - after that you have to provide a json on a separate line. An example of such json is shown below. This command generates description of provided scenario in one of three types: text in english, dot notation or png picture.
                 
-                Example JSONs^:
+                Example JSONs:
                 - for `start scenario`: 
                 ```json
                 {"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","inputClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput","input":"{\"a\":12.0,\"b\":5.5}"}
@@ -152,13 +161,23 @@ class Engine : CliktCommand(
         )
     }
 
-    private fun runRestService() {
+    private fun runRestService(
+        startScenarioAdapter: JsonAdapter<ScenarioStartRm>,
+        descriptionAdapter: JsonAdapter<ScenarioDescriptionRm>
+    ) {
         val server = Server()
         val app = KanaryApp()
+        val router = ScenariosRouter(
+            startScenarioAdapter,
+            descriptionAdapter,
+            application,
+        ).router
 
-        app.mount(ScenariosRouter().router)
+        app.mount(router)
+        app.use(requestLogger)
         server.handler = AppHandler(app)
 
+        println("Started server on port $restPort")
         server.listen(restPort)
     }
 

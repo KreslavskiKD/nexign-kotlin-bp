@@ -19,7 +19,16 @@ You can use the following commands:
 
 ### REST Service
 
- TBD https://github.com/KreslavskiKD/nexign-kotlin-bp/issues/33
+
+#### Example for PowerShell
+
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8080/scenarios/start/" -Method Post -ContentType "application/json" -Body '{"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","inputClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput","input":"{\"a\":12.0,\"b\":5.5}"}'
+```
+
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8080/scenarios/description/" -Method Get -ContentType "application/json" -Body '{"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","inputClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput","dummyInput":"{\"a\":12.0,\"b\":5.5}","descriptionType":"PICTURE","addErrorRouting":"NO"}'
+```
 
 ### Test JSONs for `ArithmeticScenario`
 For `start` command

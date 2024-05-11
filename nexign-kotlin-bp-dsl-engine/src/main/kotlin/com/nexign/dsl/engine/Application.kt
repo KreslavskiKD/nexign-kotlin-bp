@@ -73,45 +73,38 @@ class Application(
         return ""
     }
 
-    suspend fun getScenarioDescription(descriptionRequest: ScenarioDescriptionRm): String {
+    fun getScenarioDescription(descriptionRequest: ScenarioDescriptionRm): String {
         if (stopping) {
             return "The engine is stopping."
         }
 
-        var result: String = ""
+        val scenarioClazz = classLoader.loadClass(descriptionRequest.scenarioClassName)
 
-        val job = scope.launch {
-            val scenarioClazz = classLoader.loadClass(descriptionRequest.scenarioClassName)
+        validateClassIsScenarioClassWithSpecification(scenarioClazz)
 
-            validateClassIsScenarioClassWithSpecification(scenarioClazz)
+        val specificationMethod = scenarioClazz.kotlin.companionObject!!.members.stream()
+            .filter{ it.name == "specification" }
+            .findFirst()
+            .get()
 
-            val specificationMethod = scenarioClazz.kotlin.companionObject!!.members.stream()
-                .filter{ it.name == "specification" }
-                .findFirst()
-                .get()
+        specificationMethod.isAccessible = true
 
-            specificationMethod.isAccessible = true
+        val specification = specificationMethod.call(scenarioClazz.kotlin.companionObjectInstance) as Specification
+        val description = Scenario.getDescription(scenarioClazz.simpleName, specification)
 
-            val specification = specificationMethod.call(scenarioClazz.kotlin.companionObjectInstance) as Specification
-            val description = Scenario.getDescription(scenarioClazz.simpleName, specification)
+        return when (descriptionRequest.descriptionType) {
+            DescriptionType.TEXT -> {
+                description.toText(descriptionRequest.addErrorRouting)
+            }
 
-            result = when (descriptionRequest.descriptionType) {
-                DescriptionType.TEXT -> {
-                    description.toText(descriptionRequest.addErrorRouting)
-                }
+            DescriptionType.DOT_FILE -> {
+                description.toDot(descriptionRequest.addErrorRouting)
+            }
 
-                DescriptionType.DOT_FILE -> {
-                    description.toDot(descriptionRequest.addErrorRouting)
-                }
-
-                DescriptionType.PICTURE -> {
-                    description.toPicture(descriptionRequest.addErrorRouting)
-                }
+            DescriptionType.PICTURE -> {
+                description.toPicture(descriptionRequest.addErrorRouting)
             }
         }
-
-        job.join()
-        return result
     }
 
     fun forceStop() {

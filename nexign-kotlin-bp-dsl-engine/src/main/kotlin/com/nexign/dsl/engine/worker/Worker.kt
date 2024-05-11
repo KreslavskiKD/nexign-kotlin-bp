@@ -5,7 +5,7 @@ import com.nexign.dsl.base.OperationDefault
 import com.nexign.dsl.base.scenario.Scenario
 import com.nexign.dsl.base.exceptions.NexignBpNoSuchOperationException
 import com.nexign.dsl.base.scenario.data.Input
-import com.nexign.dsl.base.specification.Specifiable
+import com.nexign.dsl.base.specification.Specification
 import com.nexign.dsl.base.transitions.ErrorTransitionCondition
 import com.nexign.dsl.base.transitions.STOP_EXECUTION
 import com.nexign.dsl.base.transitions.SomethingUnexpectedHappened
@@ -13,7 +13,10 @@ import com.nexign.dsl.engine.logging.BasicWorkerLogger
 import com.nexign.dsl.engine.logging.Logger
 import com.nexign.dsl.engine.logging.RunStage
 import kotlin.reflect.KClass
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
 
 class Worker {
 
@@ -32,7 +35,15 @@ class Worker {
 
     suspend fun startScenario() {
         var currentOp : Operation = Scenario.start
-        val specification = (clazz.java.cast(scenario) as Specifiable).specification()
+
+        val specificationMethod = clazz.companionObject!!.members.stream()
+            .filter{ it.name == "specification" }
+            .findFirst()
+            .get()
+
+        specificationMethod.isAccessible = true
+
+        val specification = specificationMethod.call(clazz.companionObjectInstance) as Specification
 
         try {
             logger.clear()
