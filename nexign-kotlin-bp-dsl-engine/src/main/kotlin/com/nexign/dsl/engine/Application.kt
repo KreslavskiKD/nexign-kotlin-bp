@@ -89,8 +89,8 @@ class Application(
 
         specificationMethod.isAccessible = true
 
-        val specification = specificationMethod.call(scenarioClazz.kotlin.companionObjectInstance) as Specification
-        val description = Scenario.getDescription(scenarioClazz.simpleName, specification)
+            val specification = specificationMethod.call(scenarioClazz.kotlin.companionObjectInstance) as Specification
+            val description = Specification.getDescription(scenarioClazz.simpleName, specification)
 
         return when (descriptionRequest.descriptionType) {
             DescriptionType.TEXT -> {
