@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.9.0"
+    id("io.ktor.plugin") version "2.3.11"
     application
 }
 
@@ -8,7 +9,6 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    jcenter()       // for kanary
 }
 
 dependencies {
@@ -18,7 +18,8 @@ dependencies {
 
     implementation(kotlin("reflect"))
     implementation("com.github.ajalt.clikt:clikt:4.2.2")                // for CLI
-    implementation("com.iyanuadelekan:kanary:0.9.2")                    // for REST API
+    implementation("io.ktor:ktor-server-core")
+    implementation("io.ktor:ktor-server-netty")                         // for REST API
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")            // for JSON parsing
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
 }

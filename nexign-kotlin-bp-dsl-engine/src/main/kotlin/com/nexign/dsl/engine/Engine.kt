@@ -6,9 +6,6 @@ import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.int
-import com.iyanuadelekan.kanary.app.KanaryApp
-import com.iyanuadelekan.kanary.handlers.AppHandler
-import com.iyanuadelekan.kanary.server.Server
 import com.nexign.dsl.engine.models.response.ScenarioDescriptionRm
 import com.nexign.dsl.engine.models.response.ScenarioStartRm
 import com.nexign.dsl.engine.rest.routers.ScenariosRouter
@@ -17,10 +14,14 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import io.ktor.server.application.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.nio.file.Paths
-import javax.servlet.http.HttpServletRequest
 
 class Engine : CliktCommand(
     help = """
@@ -58,12 +59,6 @@ class Engine : CliktCommand(
     private val scenarioRequestJsonAdapter: JsonAdapter<ScenarioStartRm> = moshi.adapter<ScenarioStartRm>()
     @OptIn(ExperimentalStdlibApi::class)
     private val descriptionRequestJsonAdapter: JsonAdapter<ScenarioDescriptionRm> = moshi.adapter<ScenarioDescriptionRm>()
-
-    private val requestLogger: (HttpServletRequest?) -> Unit = {
-        if(it != null && it.method != null && it.pathInfo != null) {
-            println("Started ${it.scheme} ${it.method} request to: '${it.pathInfo}'")
-        }
-    }
 
     override fun run() {
         println("Scenarios directory: $scenariosDir")
@@ -165,20 +160,15 @@ class Engine : CliktCommand(
         startScenarioAdapter: JsonAdapter<ScenarioStartRm>,
         descriptionAdapter: JsonAdapter<ScenarioDescriptionRm>
     ) {
-        val server = Server()
-        val app = KanaryApp()
-        val router = ScenariosRouter(
-            startScenarioAdapter,
-            descriptionAdapter,
-            application,
-        ).router
-
-        app.mount(router)
-        app.use(requestLogger)
-        server.handler = AppHandler(app)
-
-        println("Started server on port $restPort")
-        server.listen(restPort)
+        embeddedServer(Netty, port = restPort) {
+            this.apply(
+                ScenariosRouter(
+                    startScenarioAdapter,
+                    descriptionAdapter,
+                    application,
+                )::routeScenarios
+            )
+        }.start(wait = true)
     }
 
     companion object {
