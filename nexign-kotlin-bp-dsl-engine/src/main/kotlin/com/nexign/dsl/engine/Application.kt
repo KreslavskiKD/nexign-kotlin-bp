@@ -40,7 +40,7 @@ class Application(
         classLoader = URLClassLoader.newInstance(urls.toTypedArray())
     }
 
-    fun startScenario(scenarioRequest: ScenarioStartRm): String {
+    suspend fun startScenario(scenarioRequest: ScenarioStartRm): String {
         if (stopping) {
             return "Can't start scenario, the engine is stopping."
         }
@@ -78,8 +78,7 @@ class Application(
             return "The engine is stopping."
         }
 
-        var result: String = ""
-
+        var result = ""
         val job = scope.launch {
             val scenarioClazz = classLoader.loadClass(descriptionRequest.scenarioClassName)
 
@@ -109,7 +108,6 @@ class Application(
                 }
             }
         }
-
         job.join()
         return result
     }

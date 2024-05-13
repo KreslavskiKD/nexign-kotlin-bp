@@ -29,7 +29,8 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
 
         override fun run(scenario: Scenario): OperationResult {
             // Do something
-            println("I am notified about $message")
+            Thread.sleep(1000)
+            // println("I am notified about $message")
 
             return SINGLE_ROUTE result None
         }
@@ -70,12 +71,14 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
             val input = it.input as ExampleScenarioInput
 
             // Do something
-            println("getting abonent action ${input.subscriber.id}")
+            // println("getting abonent action ${input.subscriber.id}")
+            Thread.sleep(1000)
             SINGLE_ROUTE result None
         }
 
         private val prolongPromotion = Operation {
             // Do something
+            Thread.sleep(1000)
             SINGLE_ROUTE result None
         }
 
@@ -83,7 +86,8 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
             val input = it.input as ExampleScenarioInput
 
             // Do something
-            println("activating action ${input.promotion.name}")
+            // println("activating action ${input.promotion.name}")
+            Thread.sleep(1000)
             SINGLE_ROUTE result None
         }
 
@@ -91,7 +95,8 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
             val input = it.input as ExampleScenarioInput
 
             // Do something
-            println("cancelling action ${input.promotion.name} activation")
+            // println("cancelling action ${input.promotion.name} activation")
+            Thread.sleep(1000)
             SINGLE_ROUTE result None
         }
 
@@ -101,6 +106,7 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
             // decision imitation
             val isActionAlreadyActive: Boolean = Random.nextBoolean()
             // Do something
+            Thread.sleep(1000)
             if (isActionAlreadyActive) {
                 transitionCondition = NO
             }
@@ -113,6 +119,7 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
             // decision imitation
             val isThereEnoughMoney: Boolean = Random.nextBoolean()
             // Do something
+            Thread.sleep(1000)
             if (isThereEnoughMoney) {
                 transitionCondition = NO
             }
@@ -122,12 +129,14 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
         private val defaultErrorHandling = Operation {
             val error: String = it.results.error
             println(error)
+            Thread.sleep(1000)
             STOP_EXECUTION result None
         }
 
         private val specialErrorHandling = Operation {
             val error: String = it.results.error
             println("Some super error handling: $error")
+            Thread.sleep(1000)
             STOP_EXECUTION result None
         }
 

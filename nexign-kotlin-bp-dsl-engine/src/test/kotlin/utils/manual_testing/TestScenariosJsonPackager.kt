@@ -17,6 +17,18 @@ data class ArithmeticInput(
     val b: Double,
 ) : Input
 
+data class Subscriber(
+    var id: String
+)
+
+data class Promotion(
+    var name: String
+)
+
+data class ExampleScenarioInput(
+    val subscriber: Subscriber,
+    val promotion: Promotion,
+) : Input
 
 internal class TestScenariosJsonPackager {
     val moshi: Moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
@@ -24,7 +36,10 @@ internal class TestScenariosJsonPackager {
     val startScenarioJsonAdapter: JsonAdapter<ScenarioStartRm> = moshi.adapter<ScenarioStartRm>()
 
     @OptIn(ExperimentalStdlibApi::class)
-    val inputJsonAdapter: JsonAdapter<ArithmeticInput> = moshi.adapter<ArithmeticInput>()
+    val arithmeticInputJsonAdapter: JsonAdapter<ArithmeticInput> = moshi.adapter<ArithmeticInput>()
+
+    @OptIn(ExperimentalStdlibApi::class)
+    val bpInputJsonAdapter: JsonAdapter<ExampleScenarioInput> = moshi.adapter<ExampleScenarioInput>()
 
     @OptIn(ExperimentalStdlibApi::class)
     val scenarioDescriptionJsonAdapter: JsonAdapter<ScenarioDescriptionRm> = moshi.adapter<ScenarioDescriptionRm>()
@@ -34,9 +49,24 @@ internal class TestScenariosJsonPackager {
         val request = ScenarioStartRm(
             scenarioClassName = "com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario",
             inputClassName = "com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput",
-            input = inputJsonAdapter.toJson(ArithmeticInput(
+            input = arithmeticInputJsonAdapter.toJson(ArithmeticInput(
                 a = 12.0,
                 b = 5.5,
+            )),
+        )
+
+        val requestJson = startScenarioJsonAdapter.toJson(request)
+        println(requestJson)
+    }
+
+    @Test
+    fun printStartExampleScenarioJson() {
+        val request = ScenarioStartRm(
+            scenarioClassName = "com.nexign.dsl.scenarios.examples.bpscenario.ExampleScenario",
+            inputClassName = "com.nexign.dsl.scenarios.examples.bpscenario.ExampleScenarioInput",
+            input = bpInputJsonAdapter.toJson(ExampleScenarioInput(
+                subscriber = Subscriber("some_id"),
+                promotion = Promotion("promotion_name")
             )),
         )
 

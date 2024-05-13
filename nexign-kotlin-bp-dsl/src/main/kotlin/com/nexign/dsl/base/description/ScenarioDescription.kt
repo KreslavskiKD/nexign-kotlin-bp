@@ -14,6 +14,7 @@ data class ScenarioDescription (
     var startingOperation: OperationDescription,
     val detailedDescription: String = "",
 ) {
+
     fun toText(showErrorRouting: ErrorRoutingShowState): String {
         val sb = StringBuilder()
         sb.append("Scenario name: $scenarioName\nDetailed description: $detailedDescription\n\n")
@@ -101,16 +102,14 @@ data class ScenarioDescription (
             sb.append("\t${operationDescription.operationName} [style=rounded shape=rect]\n")
         }
 
-        sb.append("\n\tstart [shape=doublecircle style=filled fillcolor=black fixedsize=true fontcolor=white]\n}\n")
+        sb.append("\n\tstart [shape=circle style=filled fillcolor=black fixedsize=true fontcolor=white]\n}\n")
 
         return sb.toString()
     }
 
-
-
     fun toPicture(showErrorRouting: ErrorRoutingShowState): String {
         val dot = toDot(showErrorRouting)
-        val path = "example/$scenarioName.png"
+        val path = "scenarios/image/$scenarioName.png"
 
         val g: MutableGraph = Parser().read(dot)
         Graphviz.fromGraph(g).width(700).render(Format.PNG).toFile(File(path))
