@@ -36,6 +36,8 @@ You can use the following commands:
 
 Benchmarks: For now it handles about 2M RPM of `/start` requests. I don't know when the denial of service happens, because when I tried to make such a benchmark on the same PC where the server ran the JMeter I used for benchmarking died first... After 95 seconds and about 3.5M requests. Max latency was about 1350 ms, but I can't guarantee, because the results can't be saved - the JMeter dies.
 
+There is also a swagger page at `/swagger` for better experience.
+
 Common route prefix: `/scenarios`
 
 ### Start scenario: `/start`
@@ -89,11 +91,11 @@ Returns `404 NOT FOUND` if path is incorrect or `OK 200` and PNG image if everyt
 ### Example for PowerShell
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:8080/scenarios/start/" -Method Post -ContentType "application/json" -Body '{"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","inputClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput","input":"{\"a\":12.0,\"b\":5.5}"}'
+Invoke-RestMethod -Uri "http://localhost:8080/scenarios/start" -Method Post -ContentType "application/json" -Body '{"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","inputClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput","input":"{\"a\":12.0,\"b\":5.5}"}'
 ```
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:8080/scenarios/description/" -Method Get -ContentType "application/json" -Body '{"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","inputClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput","dummyInput":"{\"a\":12.0,\"b\":5.5}","descriptionType":"PICTURE","addErrorRouting":"NO"}'
+Invoke-RestMethod -Uri "http://localhost:8080/scenarios/description" -Method Post -ContentType "application/json" -Body '{"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","descriptionType":"PICTURE","addErrorRouting":"NO"}'
 ```
 
 ### Test JSONs for `ArithmeticScenario`

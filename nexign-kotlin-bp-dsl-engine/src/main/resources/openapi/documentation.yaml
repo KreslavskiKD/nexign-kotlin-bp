@@ -1,0 +1,85 @@
+openapi: "3.0.3"
+info:
+  title: "Nexign BP engine REST API"
+  description: "A JSON API that allows you to start Scenarios and get their descriptions"
+  version: "1.0.0"
+servers:
+  - url: "http://localhost:8080"
+paths:
+  /scenarios/start:
+    post:
+      description: "Starts specified Scenario"
+      requestBody:
+        description: "A JSON object containing Scenario information"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScenarioStartRm"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Some scenario text response from execution, if any"
+  /scenarios/description:
+    post:
+      description: "Returns description in asked format about specified Scenario"
+      requestBody:
+        description: "A JSON object containing Scenario information and description parameters"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScenarioDescriptionRm"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "Text in english, a dot notation or URI to picture"
+  /scenarios/image/{path}:
+    get:
+      description: "Returns an image from corresponding path"
+      parameters:
+        - name: "path"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            image/png:
+              schema:
+                type: "string"
+                format: "binary"
+components:
+  schemas:
+    ScenarioStartRm:
+      type: "object"
+      properties:
+        scenarioClassName:
+          type: "string"
+        inputClassName:
+          type: "string"
+        input:
+          type: "string"
+    ScenarioDescriptionRm:
+      type: "object"
+      properties:
+        scenarioClassName:
+          type: "string"
+        descriptionType:
+          type: "string"
+        addErrorRouting:
+          type: "string"

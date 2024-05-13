@@ -14,9 +14,11 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
@@ -160,7 +162,13 @@ class Engine : CliktCommand(
         startScenarioAdapter: JsonAdapter<ScenarioStartRm>,
         descriptionAdapter: JsonAdapter<ScenarioDescriptionRm>
     ) {
+        println("Server started at port $restPort")
         embeddedServer(Netty, port = restPort) {
+            install(CORS) {
+                anyHost()
+                allowHeader(HttpHeaders.ContentType)
+            }
+
             this.apply(
                 ScenariosRouter(
                     startScenarioAdapter,

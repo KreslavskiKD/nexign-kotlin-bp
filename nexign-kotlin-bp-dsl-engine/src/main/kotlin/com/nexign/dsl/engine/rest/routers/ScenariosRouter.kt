@@ -7,9 +7,13 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.openapi.*
+import io.ktor.server.plugins.swagger.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.routing.route
+import io.swagger.codegen.v3.generators.html.StaticHtmlCodegen
 import java.nio.file.Paths
 import kotlin.io.path.Path
 
@@ -21,6 +25,13 @@ class ScenariosRouter(
 
     fun routeScenarios(ktorApp: io.ktor.server.application.Application) {
         ktorApp.routing {
+            swaggerUI(path = "swagger", swaggerFile = "openapi/documentation.yaml") {
+                version = "4.15.5"
+            }
+            openAPI(path="openapi", swaggerFile = "openapi/documentation.yaml") {
+                codegen = StaticHtmlCodegen()
+            }
+
             route(SCENARIOS_PATH) {
                 postStartScenarioRoute()
                 postGetScenarioDescription()
