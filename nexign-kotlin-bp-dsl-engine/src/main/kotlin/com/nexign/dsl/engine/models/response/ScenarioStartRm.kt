@@ -1,6 +1,6 @@
-package com.nexign.dsl.engine.transport
+package com.nexign.dsl.engine.models.response
 
-class ScenarioRequest(
+data class ScenarioStartRm(
     val scenarioClassName: String,
     val inputClassName: String,
     val input: String,

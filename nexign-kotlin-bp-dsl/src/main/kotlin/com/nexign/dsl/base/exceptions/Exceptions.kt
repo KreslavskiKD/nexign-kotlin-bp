@@ -1,5 +1,16 @@
 package com.nexign.dsl.base.exceptions
 
-class IllegalScenarioArgumentException(override val message: String?) : IllegalArgumentException(message)
+class NexignBpIllegalScenarioArgumentException(
+    override val message: String?,
+    override val cause: Throwable? = null,
+) : NexignBpException(message, cause)
 
-class NoSuchOperationException() : NoSuchElementException()
+class NexignBpNoSuchOperationException(
+    override val message: String?,
+    override val cause: Throwable? = null,
+) : NexignBpException(message, cause)
+
+class NexignBpIllegalClassProvidedException(
+    override val message: String?,
+    override val cause: Throwable? = null,
+) : NexignBpException(message, cause)

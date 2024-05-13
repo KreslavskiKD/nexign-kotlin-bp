@@ -1,14 +1,14 @@
 package com.nexign.dsl.scenarios.examples.arithmeticscenario
 
-import com.nexign.dsl.base.exceptions.IllegalScenarioArgumentException
+import com.nexign.dsl.base.exceptions.NexignBpIllegalScenarioArgumentException
 import com.nexign.dsl.base.scenario.Scenario
-import com.nexign.dsl.base.specification.Specification
 import com.nexign.dsl.base.specification.routing
 import com.nexign.dsl.base.specification.specification
 import com.nexign.dsl.base.transitions.*
 import com.nexign.dsl.base.*
 import com.nexign.dsl.base.scenario.data.Input
 import com.nexign.dsl.base.scenario.data.Results
+import com.nexign.dsl.base.specification.Specifiable
 
 data class ArithmeticInput(
     val a: Double,
@@ -21,22 +21,7 @@ data class ArithmeticResults(
     override var error: String,
 ) : Results
 
-class ArithmeticScenario(override val input: ArithmeticInput) : Scenario(input) {
-
-    override val specification: Specification = specification {
-        routing = routing {
-            -validateOr binary {
-                yes = route {
-                    -computeSquare
-                    -computePerimeter
-                    -printResults
-                }
-                no = route {
-                    -printError
-                }
-            }
-        }
-    }
+class ArithmeticScenario(override val input: ArithmeticInput) : Scenario() {
 
     override val results = ArithmeticResults(
         perimeter = 0.0,
@@ -44,8 +29,23 @@ class ArithmeticScenario(override val input: ArithmeticInput) : Scenario(input) 
         error = ""
     )
 
-    companion object {
-        val computePerimeter = Operation {
+    companion object : Specifiable {
+        override fun specification() = specification {
+            routing = routing {
+                -validateOr binary {
+                    yes = route {
+                        -computeSquare
+                        -computePerimeter
+                        -printResults
+                    }
+                    no = route {
+                        -printError
+                    }
+                }
+            }
+        }
+
+        private val computePerimeter = Operation {
             val input = it.input as ArithmeticInput
             val results = it.results as ArithmeticResults
 
@@ -76,18 +76,18 @@ class ArithmeticScenario(override val input: ArithmeticInput) : Scenario(input) 
                 val a: Double = input.a
                 val b: Double = input.b
                 if (a < 3.0) {
-                    throw IllegalScenarioArgumentException(Errors.BOUNDS_LESS_ERROR_A)
+                    throw NexignBpIllegalScenarioArgumentException(Errors.BOUNDS_LESS_ERROR_A)
                 }
                 if (a > 42.0) {
-                    throw IllegalScenarioArgumentException(Errors.BOUNDS_MORE_ERROR_A)
+                    throw NexignBpIllegalScenarioArgumentException(Errors.BOUNDS_MORE_ERROR_A)
                 }
                 if (b < 3.0) {
-                    throw IllegalScenarioArgumentException(Errors.BOUNDS_LESS_ERROR_B)
+                    throw NexignBpIllegalScenarioArgumentException(Errors.BOUNDS_LESS_ERROR_B)
                 }
                 if (b > 42.0) {
-                    throw IllegalScenarioArgumentException(Errors.BOUNDS_MORE_ERROR_B)
+                    throw NexignBpIllegalScenarioArgumentException(Errors.BOUNDS_MORE_ERROR_B)
                 }
-            } catch (e: IllegalScenarioArgumentException) {
+            } catch (e: NexignBpIllegalScenarioArgumentException) {
                 results.error = e.message!!
                 continueExecution = NO
             }

@@ -5,13 +5,16 @@ import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.int
-import com.nexign.dsl.engine.transport.ScenarioRequest
+import com.nexign.dsl.engine.models.response.ScenarioDescriptionRm
+import com.nexign.dsl.engine.models.response.ScenarioStartRm
 import com.squareup.moshi.adapter
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import kotlinx.coroutines.runBlocking
 import java.io.File
+import java.nio.file.Paths
 
 class Engine : CliktCommand(
     help = """
@@ -24,7 +27,9 @@ class Engine : CliktCommand(
         help = """
         Directory where scenarios JARs are stored
         """.trimIndent()
-    ).file().default(defaultScenariosDir)
+    ).file().default(
+        File(Paths.get("").toAbsolutePath().toString() + defaultScenariosDir)
+    )
 
     // TODO
     private val restService: Int by option("-r", "--rest-port",
@@ -35,8 +40,6 @@ class Engine : CliktCommand(
         """.trimIndent()
     ).int().default(-1)
 
-    // TODO maybe add some more types of interaction later
-
     private lateinit var application: Application
 
     private val moshi: Moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
@@ -44,7 +47,8 @@ class Engine : CliktCommand(
     @OptIn(ExperimentalStdlibApi::class)
     override fun run() {
 
-        val jsonAdapter: JsonAdapter<ScenarioRequest> = moshi.adapter<ScenarioRequest>()
+        val scenarioRequestJsonAdapter: JsonAdapter<ScenarioStartRm> = moshi.adapter<ScenarioStartRm>()
+        val descriptionRequestJsonAdapter: JsonAdapter<ScenarioDescriptionRm> = moshi.adapter<ScenarioDescriptionRm>()
 
         println("Scenarios directory: $scenariosDir")
 
@@ -55,39 +59,58 @@ class Engine : CliktCommand(
         application = Application(scenariosDir, moshi)
 
         while (true) {
-            val input = readln()
+            when (val input = readln()) {
+                "force stop" -> {
+                    application.forceStop()
+                    break
+                }
+                "stop" -> {
+                    application.gracefulStop()
+                    break
+                }
+                "start scenario" -> {
+                    val jsonLine = readln()
 
-            if (input == "force stop") {
-                application.forceStop()
-                break
-            }
+                    try {
+                        val scenarioRequest = scenarioRequestJsonAdapter.nullSafe().serializeNulls().fromJson(jsonLine)
 
-            if (input == "graceful stop" || input == "stop") {
-                application.gracefulStop()
-                break
-            }
-
-            if (input == "start scenario") {
-                val jsonLine = readln()
-
-                try {
-                    val scenarioRequest = jsonAdapter.nullSafe().serializeNulls().fromJson(jsonLine)
-
-                    if (scenarioRequest != null) {
-                        application.startScenario(scenarioRequest)
-                    } else {
-                        throw JsonDataException("scenario request failed to parse or is null")
+                        if (scenarioRequest != null) {
+                            application.startScenario(scenarioRequest)
+                        } else {
+                            throw JsonDataException("scenario request failed to parse or is null")
+                        }
+                    } catch (e: Exception) {
+                        println(e.message) // TODO: Make some better handling
                     }
-                } catch (e: Exception) {
-                    println(e.message) // TODO: Make some better handling
+                }
+                "get description" -> {
+                    val jsonLine = readln()
+
+                    try {
+                        val descriptionRequest = descriptionRequestJsonAdapter.nullSafe().serializeNulls().fromJson(jsonLine)
+
+                        if (descriptionRequest != null) {
+                            var result = ""
+                            runBlocking {
+                                result = application.getScenarioDescription(descriptionRequest)
+                            }
+                            println(result)
+                        } else {
+                            throw JsonDataException("scenario request failed to parse or is null")
+                        }
+                    } catch (e: Exception) {
+                        println(e.message) // TODO: Make some better handling
+                    }
+                }
+                else -> {
+                    println("Command \"$input\" unrecognized")
                 }
             }
         }
-
     }
 
     companion object {
-        val defaultScenariosDir: File = File("./scenarios") // TODO check if that's OK
+        const val defaultScenariosDir = "./scenarios"
     }
 
 }

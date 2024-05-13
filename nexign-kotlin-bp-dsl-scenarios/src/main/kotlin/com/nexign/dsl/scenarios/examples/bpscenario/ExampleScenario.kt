@@ -2,7 +2,10 @@ package com.nexign.dsl.scenarios.examples.bpscenario
 
 import com.nexign.dsl.base.*
 import com.nexign.dsl.base.scenario.Scenario
+import com.nexign.dsl.base.scenario.data.DefaultResult
 import com.nexign.dsl.base.scenario.data.Input
+import com.nexign.dsl.base.scenario.data.Results
+import com.nexign.dsl.base.specification.Specifiable
 import com.nexign.dsl.base.specification.Specification
 import com.nexign.dsl.base.specification.routing
 import com.nexign.dsl.base.specification.specification
@@ -16,37 +19,9 @@ data class ExampleScenarioInput(
     val promotion: Promotion,
 ) : Input
 
-class ExampleScenario(override val input: ExampleScenarioInput) : Scenario(input)  {
+class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
 
-    override val specification: Specification = specification {
-        routing = routing {
-            -getSubscriberInfo
-            -checkSubscriberPromotions binary {
-                yes = route {
-                    -prolongPromotion
-                    -notifyAboutPromotionTimePeriod
-                    -end
-                }
-                no = route {
-                    -activatePromotion
-                    -writeOffMoney multiple {
-                        +(YES to route {
-                            -cancelPromotionActivation
-                            -NotifyAction("error when activating promotion")
-                            -end
-                        })
-                        +(NO to route {
-                            -NotifyAction("promotion activation")
-                            -notifyAboutPromotionTimePeriod
-                        })
-                    }
-                }
-            }
-        } errorRouting {
-            listOf(activatePromotion, cancelPromotionActivation)  with ActionProblemsETC              togetherRoutesTo specialErrorHandling
-            OperationDefault                                      with SomethingUnexpectedHappened    routesTo defaultErrorHandling
-        }
-    }
+    override val results: Results = DefaultResult()
 
     open class NotifyAction(
         private val message: String,
@@ -60,7 +35,37 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario(input
         }
     }
 
-    companion object {
+    companion object: Specifiable {
+        override fun specification(): Specification = specification {
+            routing = routing {
+                -getSubscriberInfo
+                -checkSubscriberPromotions binary {
+                    yes = route {
+                        -prolongPromotion
+                        -notifyAboutPromotionTimePeriod
+                        -end
+                    }
+                    no = route {
+                        -activatePromotion
+                        -writeOffMoney multiple {
+                            +(YES to route {
+                                -cancelPromotionActivation
+                                -NotifyAction("error when activating promotion")
+                                -end
+                            })
+                            +(NO to route {
+                                -NotifyAction("promotion activation")
+                                -notifyAboutPromotionTimePeriod
+                            })
+                        }
+                    }
+                }
+            } errorRouting {
+                listOf(activatePromotion, cancelPromotionActivation)  with ActionProblemsETC              togetherRoutesTo specialErrorHandling
+                OperationDefault                                      with SomethingUnexpectedHappened    routesTo defaultErrorHandling
+            }
+        }
+
         private val getSubscriberInfo = Operation {
             val input = it.input as ExampleScenarioInput
 
@@ -128,5 +133,4 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario(input
 
         private val notifyAboutPromotionTimePeriod = NotifyAction("action time period")
     }
-
 }

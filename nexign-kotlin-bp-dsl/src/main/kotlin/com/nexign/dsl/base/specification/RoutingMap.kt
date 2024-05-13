@@ -116,8 +116,8 @@ class RoutingMap {
         val route = mutableListOf<Operation>()
 
         operator fun Operation.unaryMinus(): Operation {
-            route += this
-            return this
+            route += this@unaryMinus
+            return this@unaryMinus
         }
 
         infix fun Operation.binary(init: BinaryChoice.() -> Unit) : Operation {
@@ -125,12 +125,12 @@ class RoutingMap {
             binaryChoice.init()
             binaryChoice.build()
 
-            if (routingMap.specification[this] == null) {
-                routingMap.specification[this] = mutableMapOf()
+            if (routingMap.specification[this@binary] == null) {
+                routingMap.specification[this@binary] = mutableMapOf()
             }
 
-            routingMap.specification[this]?.put(YES, binaryChoice.yes.route[0])
-            routingMap.specification[this]?.put(NO, binaryChoice.no.route[0])
+            routingMap.specification[this@binary]?.put(YES, binaryChoice.yes.route[0])
+            routingMap.specification[this@binary]?.put(NO, binaryChoice.no.route[0])
             return this@binary
         }
 
@@ -138,12 +138,12 @@ class RoutingMap {
             val mc = MultipleChoiceBuilder(routingMap)
             mc.init()
 
-            if (routingMap.specification[this] == null) {
-                routingMap.specification[this] = mutableMapOf()
+            if (routingMap.specification[this@multiple] == null) {
+                routingMap.specification[this@multiple] = mutableMapOf()
             }
 
             for (p in mc.choices) {
-                routingMap.specification[this]?.put(p.first, p.second)
+                routingMap.specification[this@multiple]?.put(p.first, p.second)
             }
             return this@multiple
         }
@@ -175,7 +175,8 @@ class RoutingMap {
 
 fun routing(init: RoutingMap.RoutingBlockBuilder.() -> Unit) : RoutingMap {
     val rmap = RoutingMap()
-    val block = RoutingMap.RoutingBlockBuilder(rmap).apply(init)
+    val block = RoutingMap.RoutingBlockBuilder(rmap)
+    block.init()
     rmap.buildBlock(block)
     return rmap
 }
