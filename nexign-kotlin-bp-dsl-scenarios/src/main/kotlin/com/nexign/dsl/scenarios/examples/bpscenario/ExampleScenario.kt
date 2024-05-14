@@ -23,19 +23,6 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
 
     override val results: Results = DefaultResult()
 
-    open class NotifyAction(
-        private val message: String,
-    ) : Operation {
-
-        override fun run(scenario: Scenario): OperationResult {
-            // Do something
-            Thread.sleep(1000)
-            // println("I am notified about $message")
-
-            return SINGLE_ROUTE result None
-        }
-    }
-
     companion object: Specifiable {
         override fun specification(): Specification = specification {
             routing = routing {
@@ -51,12 +38,13 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
                         -writeOffMoney multiple {
                             +(YES to route {
                                 -cancelPromotionActivation
-                                -NotifyAction("error when activating promotion")
+                                -notifyAboutErrorWithPromotionActivation
                                 -end
                             })
                             +(NO to route {
-                                -NotifyAction("promotion activation")
+                                -notifyAboutPromotionActivation
                                 -notifyAboutPromotionTimePeriod
+                                -end
                             })
                         }
                     }
@@ -140,6 +128,22 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
             STOP_EXECUTION result None
         }
 
-        private val notifyAboutPromotionTimePeriod = NotifyAction("action time period")
+        private val notifyAboutPromotionTimePeriod = Operation {
+            // println("Notifying about promotion time period")
+            Thread.sleep(1000)
+            SINGLE_ROUTE result None
+        }
+
+        private val notifyAboutPromotionActivation = Operation {
+            // println("Notifying about promotion activation")
+            Thread.sleep(1000)
+            SINGLE_ROUTE result None
+        }
+
+        private val notifyAboutErrorWithPromotionActivation = Operation {
+            // println("Notifying about error with promotion activation")
+            Thread.sleep(1000)
+            SINGLE_ROUTE result None
+        }
     }
 }

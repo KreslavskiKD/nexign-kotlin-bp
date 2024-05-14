@@ -109,4 +109,16 @@ internal class TestScenariosJsonPackager {
         val requestJson = scenarioDescriptionJsonAdapter.toJson(request)
         println(requestJson)
     }
+
+    @Test
+    fun printExampleScenarioPictureDescriptionJson() {
+        val request = ScenarioDescriptionRm(
+            scenarioClassName = "com.nexign.dsl.scenarios.examples.bpscenario.ExampleScenario",
+            addErrorRouting = ErrorRoutingShowState.NO,
+            descriptionType = DescriptionType.PICTURE,
+        )
+
+        val requestJson = scenarioDescriptionJsonAdapter.toJson(request)
+        println(requestJson)
+    }
 }

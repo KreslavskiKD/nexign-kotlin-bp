@@ -77,15 +77,15 @@ data class ScenarioDescription (
                             }
                         }
                     }
+                    var label = ""
+                    if (tr.key == YES) {
+                        label = "[label=\"Yes\"]"
+                    } else if (tr.key == NO) {
+                        label = "[label=\"No\"]"
+                    }
+                    sb.append("\t$currentOpName -> ${tr.value.operationName}$label;\n")
                     if (!visited.contains(tr.value)) {
                         next = next.plus(tr.value)
-                        var label = ""
-                        if (tr.key == YES) {
-                            label = "[label=\"Yes\"]"
-                        } else if (tr.key == NO) {
-                            label = "[label=\"No\"]"
-                        }
-                        sb.append("\t$currentOpName -> ${tr.value.operationName}$label;\n")
                     }
                 }
             }
@@ -97,6 +97,10 @@ data class ScenarioDescription (
 
         for (operationDescription in visited) {
             if (operationDescription.operationName == "start") {
+                continue
+            }
+            if (operationDescription.operationName == "end") {
+                sb.append("\t${operationDescription.operationName} [shape=doublecircle style=filled fillcolor=black fixedsize=true fontcolor=white]\n")
                 continue
             }
             sb.append("\t${operationDescription.operationName} [style=rounded shape=rect]\n")
