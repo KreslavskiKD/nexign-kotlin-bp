@@ -1,10 +1,13 @@
 # nexign-kotlin-bp
 
-## How to run
+## How to build
 
-- First of all we need `kotlin` installed. [How to](https://kotlinlang.org/docs/command-line.html)
+It is a Gradle project, so first of all ypu need Gradle. Then in the root run `gradle build`
 
-- Then we ran a following command ```kotlin -cp path/to/engine.jar com.nexign.dsl.engine.Main -s path/to/folder/with/scenario/jars```
+To build engine only, go to `nexign-kotlin-bp-dsl-engine` folder and execute the same command.
+
+[comment]: <> (gradle build -D org.gradle.java.home="C:\PROGRA~1\Java\jdk-17")
+
 
 ```bash
 Usage: engine [<options>]
@@ -108,8 +111,6 @@ For `get description` command
 ```json
 {"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","descriptionType":"PICTURE","addErrorRouting":"NO"}
 ```
-
-[comment]: <> (kotlin -cp nexign-kotlin-bp-dsl-engine-1.0-SNAPSHOT.jar com.nexign.dsl.engine.Main -s /mnt/d/_Kira/Higher_School_of_Economics/_Nexign_graduation_work/tryout/jars)
 
 ## License 
 
