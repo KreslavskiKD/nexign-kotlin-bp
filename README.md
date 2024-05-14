@@ -1,5 +1,5 @@
 # nexign-kotlin-bp
-
+![build workflow](https://github.com/KreslavskiKD/nexign-kotlin-bp/actions/workflows/build-gradle-project.yml/badge.svg)
 ## How to build
 
 It is a Gradle project, so first of all ypu need Gradle. Then in the root run `gradle build`
