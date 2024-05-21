@@ -1,0 +1,38 @@
+<mxfile host="Electron" modified="2024-05-14T17:48:54.351Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="d1UNtuI_X6oyDpNPSQpa" version="23.1.5" type="device">
+  <diagram name="Страница — 1" id="AsmjFWyyXA_a_f0gqd3f">
+    <mxGraphModel dx="252" dy="193" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="yZ4iwfG-ot99XJUKMga5-4" value="" style="html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="260" y="280" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="yZ4iwfG-ot99XJUKMga5-5" value="" style="endArrow=none;html=1;rounded=0;align=center;verticalAlign=top;endFill=0;labelBackgroundColor=none;endSize=2;" edge="1" source="yZ4iwfG-ot99XJUKMga5-4" target="yZ4iwfG-ot99XJUKMga5-6" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="yZ4iwfG-ot99XJUKMga5-6" value="" style="ellipse;html=1;fontSize=11;align=center;fillColor=none;points=[];aspect=fixed;resizable=0;verticalAlign=bottom;labelPosition=center;verticalLabelPosition=top;flipH=1;" vertex="1" parent="1">
+          <mxGeometry x="271" y="260" width="8" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="yZ4iwfG-ot99XJUKMga5-7" value="Engine" style="html=1;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="250" y="280" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="yZ4iwfG-ot99XJUKMga5-8" value="" style="endArrow=none;html=1;rounded=0;align=center;verticalAlign=top;endFill=0;labelBackgroundColor=none;endSize=2;" edge="1" target="yZ4iwfG-ot99XJUKMga5-9" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="290" y="230" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yZ4iwfG-ot99XJUKMga5-9" value="" style="shape=requiredInterface;html=1;fontSize=11;align=center;fillColor=none;points=[];aspect=fixed;resizable=0;verticalAlign=bottom;labelPosition=center;verticalLabelPosition=top;flipH=1;rotation=-180;" vertex="1" parent="1">
+          <mxGeometry x="279" y="259" width="5" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="yZ4iwfG-ot99XJUKMga5-11" value="" style="endArrow=none;html=1;rounded=0;align=center;verticalAlign=top;endFill=0;labelBackgroundColor=none;endSize=2;" edge="1" target="yZ4iwfG-ot99XJUKMga5-12" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="260" y="230" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="yZ4iwfG-ot99XJUKMga5-12" value="" style="shape=requiredInterface;html=1;fontSize=11;align=center;fillColor=none;points=[];aspect=fixed;resizable=0;verticalAlign=bottom;labelPosition=center;verticalLabelPosition=top;flipH=1;" vertex="1" parent="1">
+          <mxGeometry x="266" y="259" width="5" height="10" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
