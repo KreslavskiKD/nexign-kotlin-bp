@@ -73,14 +73,14 @@ class Worker {
                     break
                 }
 
-                val nextOp: Operation = specification.routing[currentOp]?.get(condition)
+                val nextOp: Operation = specification[currentOp]?.get(condition)
                         ?: throw NexignBpNoSuchOperationException("No operation from $currentOp in case of condition $condition")
 
                 currentOp = nextOp
             }
         } catch (e: Exception) {
-            if (specification.routing[OperationDefault] != null && specification.routing[OperationDefault]?.isNotEmpty() == true) {
-                val errorHandlingOp = specification.routing[OperationDefault]?.get(SomethingUnexpectedHappened)
+            if (specification[OperationDefault] != null && specification[OperationDefault]?.isNotEmpty() == true) {
+                val errorHandlingOp = specification[OperationDefault]?.get(SomethingUnexpectedHappened)
                     ?: throw e
 
                 logger.log("default error handling route:\n exception happened:\n${e.message}\nstarted default handling with operation ${errorHandlingOp.javaClass.simpleName}")

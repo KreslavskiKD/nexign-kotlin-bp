@@ -2,8 +2,7 @@ package com.nexign.dsl.scenarios.examples.arithmeticscenario
 
 import com.nexign.dsl.base.exceptions.NexignBpIllegalScenarioArgumentException
 import com.nexign.dsl.base.scenario.Scenario
-import com.nexign.dsl.base.specification.routing
-import com.nexign.dsl.base.specification.specification
+import com.nexign.dsl.base.specification.route
 import com.nexign.dsl.base.transitions.*
 import com.nexign.dsl.base.*
 import com.nexign.dsl.base.scenario.data.Input
@@ -30,17 +29,15 @@ class ArithmeticScenario(override val input: ArithmeticInput) : Scenario() {
     )
 
     companion object : Specifiable {
-        override fun specification() = specification {
-            routing = routing {
-                -validateOr binary {
-                    yes = route {
-                        -computeSquare
-                        -computePerimeter
-                        -printResults
-                    }
-                    no = route {
-                        -printError
-                    }
+        override fun specification() = route {
+            -validateOr binary {
+                yes = route {
+                    -computeSquare
+                    -computePerimeter
+                    -printResults
+                }
+                no = route {
+                    -printError
                 }
             }
         }
