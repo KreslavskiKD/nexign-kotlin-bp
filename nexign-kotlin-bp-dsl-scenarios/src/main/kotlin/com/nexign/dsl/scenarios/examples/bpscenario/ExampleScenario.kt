@@ -7,8 +7,7 @@ import com.nexign.dsl.base.scenario.data.Input
 import com.nexign.dsl.base.scenario.data.Results
 import com.nexign.dsl.base.specification.Specifiable
 import com.nexign.dsl.base.specification.Specification
-import com.nexign.dsl.base.specification.routing
-import com.nexign.dsl.base.specification.specification
+import com.nexign.dsl.base.specification.route
 import com.nexign.dsl.base.transitions.*
 import com.nexign.dsl.scenarios.examples.bpscenario.mock.Subscriber
 import com.nexign.dsl.scenarios.examples.bpscenario.mock.Promotion
@@ -24,35 +23,33 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
     override val results: Results = DefaultResult()
 
     companion object: Specifiable {
-        override fun specification(): Specification = specification {
-            routing = routing {
-                -getSubscriberInfo
-                -checkSubscriberPromotions binary {
-                    yes = route {
-                        -prolongPromotion
-                        -notifyAboutPromotionTimePeriod
-                        -end
-                    }
-                    no = route {
-                        -activatePromotion
-                        -writeOffMoney multiple {
-                            +(YES to route {
-                                -cancelPromotionActivation
-                                -notifyAboutErrorWithPromotionActivation
-                                -end
-                            })
-                            +(NO to route {
-                                -notifyAboutPromotionActivation
-                                -notifyAboutPromotionTimePeriod
-                                -end
-                            })
-                        }
+        override fun specification(): Specification = route {
+            -getSubscriberInfo
+            -checkSubscriberPromotions binary {
+                yes = route {
+                    -prolongPromotion
+                    -notifyAboutPromotionTimePeriod
+                    -end
+                }
+                no = route {
+                    -activatePromotion
+                    -writeOffMoney multiple {
+                        +(YES to route {
+                            -cancelPromotionActivation
+                            -notifyAboutErrorWithPromotionActivation
+                            -end
+                        })
+                        +(NO to route {
+                            -notifyAboutPromotionActivation
+                            -notifyAboutPromotionTimePeriod
+                            -end
+                        })
                     }
                 }
-            } errorRouting {
-                listOf(activatePromotion, cancelPromotionActivation)  with ActionProblemsETC              togetherRoutesTo specialErrorHandling
-                OperationDefault                                      with SomethingUnexpectedHappened    routesTo defaultErrorHandling
             }
+        } errorRouting {
+            listOf(activatePromotion, cancelPromotionActivation)  with ActionProblemsETC              togetherRoutesTo specialErrorHandling
+            OperationDefault                                      with SomethingUnexpectedHappened    routesTo defaultErrorHandling
         }
 
         private val getSubscriberInfo = Operation {
