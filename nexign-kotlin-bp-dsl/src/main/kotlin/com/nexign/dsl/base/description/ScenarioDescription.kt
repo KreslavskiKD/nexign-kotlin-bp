@@ -54,7 +54,13 @@ data class ScenarioDescription (
 
     fun toDot(showErrorRouting: ErrorRoutingShowState): String {
         val sb = StringBuilder()
-        sb.append("digraph $scenarioName {\n")
+        sb.append(
+            """digraph "$scenarioName" {
+                 graph [fontname = "Arial"];
+                 node [fontname = "Arial"];
+                 edge [fontname = "Arial"];
+            """.trimIndent()
+        )
 
         val visited : MutableList<OperationDescription> = mutableListOf()
 
