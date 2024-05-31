@@ -59,6 +59,8 @@ data class ScenarioDescription (
                  graph [fontname = "Arial"];
                  node [fontname = "Arial"];
                  edge [fontname = "Arial"];
+                 
+                 splines=ortho;
             """.trimIndent()
         )
 
@@ -85,9 +87,9 @@ data class ScenarioDescription (
                     }
                     var label = ""
                     if (tr.key == YES) {
-                        label = "[label=\"Yes\"]"
+                        label = "[taillabel=\"Yes\" labeldistance=3 labelangle=75]"
                     } else if (tr.key == NO) {
-                        label = "[label=\"No\"]"
+                        label = "[taillabel=\"No\" labeldistance=3 labelangle=75]"
                     }
                     sb.append("\t\"$currentOpName\" -> \"${tr.value.operationName}\" $label;\n")
                     if (!visited.contains(tr.value)) {
