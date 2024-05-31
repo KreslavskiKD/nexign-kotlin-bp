@@ -24,35 +24,35 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
 
     companion object: Specifiable {
         override fun specification(): Specification = route {
-            -getSubscriberInfo
-            -checkSubscriberPromotions binary {
+            -`get subscriber info`
+            -`check subscriber promotions` binary {
                 yes = route {
-                    -prolongPromotion
-                    -notifyAboutPromotionTimePeriod
+                    -`prolong promotion`
+                    -`notify about promotion time period`
                     -end
                 }
                 no = route {
-                    -activatePromotion
-                    -writeOffMoney multiple {
+                    -`activate promotion`
+                    -`write off money` multiple {
                         +(YES to route {
-                            -cancelPromotionActivation
-                            -notifyAboutErrorWithPromotionActivation
+                            -`cancel promotion activation`
+                            -`notify about error with promotion activation`
                             -end
                         })
                         +(NO to route {
-                            -notifyAboutPromotionActivation
-                            -notifyAboutPromotionTimePeriod
+                            -`notify about promotion activation`
+                            -`notify about promotion time period`
                             -end
                         })
                     }
                 }
             }
         } errorRouting {
-            listOf(activatePromotion, cancelPromotionActivation)  with ActionProblemsETC              togetherRoutesTo specialErrorHandling
+            listOf(`activate promotion`, `cancel promotion activation`)  with ActionProblemsETC              togetherRoutesTo specialErrorHandling
             OperationDefault                                      with SomethingUnexpectedHappened    routesTo defaultErrorHandling
         }
 
-        private val getSubscriberInfo = Operation {
+        private val `get subscriber info` = Operation {
             val input = it.input as ExampleScenarioInput
 
             // Do something
@@ -61,13 +61,13 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
             SINGLE_ROUTE result None
         }
 
-        private val prolongPromotion = Operation {
+        private val `prolong promotion` = Operation {
             // Do something
             Thread.sleep(1000)
             SINGLE_ROUTE result None
         }
 
-        private val activatePromotion = Operation {
+        private val `activate promotion` = Operation {
             val input = it.input as ExampleScenarioInput
 
             // Do something
@@ -76,7 +76,7 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
             SINGLE_ROUTE result None
         }
 
-        private val cancelPromotionActivation = Operation {
+        private val `cancel promotion activation` = Operation {
             val input = it.input as ExampleScenarioInput
 
             // Do something
@@ -85,7 +85,7 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
             SINGLE_ROUTE result None
         }
 
-        private val checkSubscriberPromotions = Operation {
+        private val `check subscriber promotions` = Operation {
             var transitionCondition: TransitionCondition = YES
 
             // decision imitation
@@ -98,7 +98,7 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
             transitionCondition result None
         }
 
-        private val writeOffMoney = Operation {
+        private val `write off money` = Operation {
             var transitionCondition: TransitionCondition = YES
 
             // decision imitation
@@ -125,19 +125,19 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
             STOP_EXECUTION result None
         }
 
-        private val notifyAboutPromotionTimePeriod = Operation {
+        private val `notify about promotion time period` = Operation {
             // println("Notifying about promotion time period")
             Thread.sleep(1000)
             SINGLE_ROUTE result None
         }
 
-        private val notifyAboutPromotionActivation = Operation {
+        private val `notify about promotion activation` = Operation {
             // println("Notifying about promotion activation")
             Thread.sleep(1000)
             SINGLE_ROUTE result None
         }
 
-        private val notifyAboutErrorWithPromotionActivation = Operation {
+        private val `notify about error with promotion activation` = Operation {
             // println("Notifying about error with promotion activation")
             Thread.sleep(1000)
             SINGLE_ROUTE result None

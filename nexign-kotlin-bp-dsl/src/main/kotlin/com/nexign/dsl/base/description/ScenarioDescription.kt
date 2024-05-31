@@ -83,7 +83,7 @@ data class ScenarioDescription (
                     } else if (tr.key == NO) {
                         label = "[label=\"No\"]"
                     }
-                    sb.append("\t$currentOpName -> ${tr.value.operationName}$label;\n")
+                    sb.append("\t\"$currentOpName\" -> \"${tr.value.operationName}\" $label;\n")
                     if (!visited.contains(tr.value)) {
                         next = next.plus(tr.value)
                     }
@@ -103,7 +103,7 @@ data class ScenarioDescription (
                 sb.append("\t${operationDescription.operationName} [shape=doublecircle style=filled fillcolor=black fixedsize=true fontcolor=white]\n")
                 continue
             }
-            sb.append("\t${operationDescription.operationName} [style=rounded shape=rect]\n")
+            sb.append("\t\"${operationDescription.operationName}\" [style=rounded shape=rect]\n")
         }
 
         sb.append("\n\tstart [shape=circle style=filled fillcolor=black fixedsize=true fontcolor=white]\n}\n")
