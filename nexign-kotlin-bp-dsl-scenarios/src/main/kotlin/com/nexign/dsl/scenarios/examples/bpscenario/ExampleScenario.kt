@@ -33,23 +33,26 @@ class ExampleScenario(override val input: ExampleScenarioInput) : Scenario() {
                 }
                 no = route {
                     -`activate promotion`
-                    -`write off money` multiple {
-                        +(YES to route {
+                    -`write off money` binary  {
+                        yes = route {
                             -`cancel promotion activation`
                             -`notify about error with promotion activation`
                             -end
-                        })
-                        +(NO to route {
+                        }
+                        no = route {
                             -`notify about promotion activation`
                             -`notify about promotion time period`
                             -end
-                        })
+                        }
                     }
                 }
             }
         } errorRouting {
-            listOf(`activate promotion`, `cancel promotion activation`)  with ActionProblemsETC              togetherRoutesTo specialErrorHandling
-            OperationDefault                                      with SomethingUnexpectedHappened    routesTo defaultErrorHandling
+            listOf(
+                `activate promotion`,
+                `cancel promotion activation`
+            ) with ActionProblemsETC togetherRoutesTo specialErrorHandling
+            OperationDefault with SomethingUnexpectedHappened routesTo defaultErrorHandling
         }
 
         private val `get subscriber info` = Operation {

@@ -61,6 +61,7 @@ data class ScenarioDescription (
                  edge [fontname = "Arial"];
                  
                  splines=ortho;
+                 
             """.trimIndent()
         )
 
@@ -74,10 +75,13 @@ data class ScenarioDescription (
                 visited.add(operationDescription)
                 val currentOpName = operationDescription.operationName
                 for (tr in operationDescription.transitions) {
+                    var label = "["
                     if (tr.key is ErrorTransitionCondition) {
                         when (showErrorRouting) {
                             ErrorRoutingShowState.NO -> continue
-                            ErrorRoutingShowState.YES -> {}
+                            ErrorRoutingShowState.YES -> {
+                                label += "style=dashed "
+                            }
                             ErrorRoutingShowState.YES_WITHOUT_DEFAULT -> {
                                 if (tr.value.operationName == OperationDefault.javaClass.simpleName) {
                                     continue
@@ -85,12 +89,12 @@ data class ScenarioDescription (
                             }
                         }
                     }
-                    var label = ""
                     if (tr.key == YES) {
-                        label = "[taillabel=\"Yes\" labeldistance=3 labelangle=75]"
+                        label += "taillabel=\"Yes\" labeldistance=3 labelangle=75 "
                     } else if (tr.key == NO) {
-                        label = "[taillabel=\"No\" labeldistance=3 labelangle=75]"
+                        label += "taillabel=\"No\" labeldistance=3 labelangle=75 "
                     }
+                    label += "]"
                     sb.append("\t\"$currentOpName\" -> \"${tr.value.operationName}\" $label;\n")
                     if (!visited.contains(tr.value)) {
                         next = next.plus(tr.value)
@@ -124,7 +128,7 @@ data class ScenarioDescription (
         val path = "scenarios/image/$scenarioName.png"
 
         val g: MutableGraph = Parser().read(dot)
-        Graphviz.fromGraph(g).width(700).render(Format.PNG).toFile(File(path))
+        Graphviz.fromGraph(g).render(Format.PNG).toFile(File(path))
         return path
     }
 }
