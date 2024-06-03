@@ -1,8 +1,8 @@
-rootProject.name = "nexign-kotlin-bp"
+rootProject.name = "nexign-internship-kotlin-bp"
 
-include("nexign-kotlin-bp-dsl")
-include("nexign-kotlin-bp-dsl-engine")
-include("nexign-kotlin-bp-dsl-scenarios")
+include("nexign-internship-kotlin-bp-dsl")
+include("nexign-internship-kotlin-bp-dsl-engine")
+include("nexign-internship-kotlin-bp-dsl-scenarios")
 
 pluginManagement {
     repositories {
