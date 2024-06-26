@@ -94,22 +94,22 @@ Returns `404 NOT FOUND` if path is incorrect or `OK 200` and PNG image if everyt
 ### Example for PowerShell
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:8080/scenarios/start" -Method Post -ContentType "application/json" -Body '{"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","inputClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput","input":"{\"a\":12.0,\"b\":5.5}"}'
+Invoke-RestMethod -Uri "http://localhost:8080/scenarios/start" -Method Post -ContentType "application/json" -Body '{"scenarioClassName":"com.nexign_internship.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","inputClassName":"com.nexign_internship.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput","input":"{\"a\":12.0,\"b\":5.5}"}'
 ```
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:8080/scenarios/description" -Method Post -ContentType "application/json" -Body '{"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","descriptionType":"PICTURE","addErrorRouting":"NO"}'
+Invoke-RestMethod -Uri "http://localhost:8080/scenarios/description" -Method Post -ContentType "application/json" -Body '{"scenarioClassName":"com.nexign_internship.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","descriptionType":"PICTURE","addErrorRouting":"NO"}'
 ```
 
 ### Test JSONs for `ArithmeticScenario`
 For `start scenario` command
 ```json
-{"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","inputClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput","input":"{\"a\":12.0,\"b\":5.5}"}
+{"scenarioClassName":"com.nexign_internship.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","inputClassName":"com.nexign_internship.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput","input":"{\"a\":12.0,\"b\":5.5}"}
 ```
 
 For `get description` command
 ```json
-{"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","descriptionType":"PICTURE","addErrorRouting":"NO"}
+{"scenarioClassName":"com.nexign_internship.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","descriptionType":"PICTURE","addErrorRouting":"NO"}
 ```
 
 ## License 

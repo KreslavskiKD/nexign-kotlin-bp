@@ -19,8 +19,6 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.nio.file.Paths
@@ -148,11 +146,11 @@ class Engine : CliktCommand(
                 Example JSONs:
                 - for `start scenario`: 
                 ```json
-                {"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","inputClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput","input":"{\"a\":12.0,\"b\":5.5}"}
+                {"scenarioClassName":"com.nexign_internship.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","inputClassName":"com.nexign_internship.dsl.scenarios.examples.arithmeticscenario.ArithmeticInput","input":"{\"a\":12.0,\"b\":5.5}"}
                 ```
                 - for `get description`:
                 ```json
-                {"scenarioClassName":"com.nexign.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","descriptionType":"PICTURE","addErrorRouting":"NO"}
+                {"scenarioClassName":"com.nexign_internship.dsl.scenarios.examples.arithmeticscenario.ArithmeticScenario","descriptionType":"PICTURE","addErrorRouting":"NO"}
                 ```
             """.trimIndent()
         )
