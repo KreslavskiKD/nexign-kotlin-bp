@@ -2,7 +2,7 @@
 ![build workflow](https://github.com/KreslavskiKD/nexign-kotlin-bp/actions/workflows/build-gradle-project.yml/badge.svg)
 ## How to build
 
-It is a Gradle project, so first of all ypu need Gradle. Then in the root run `gradle build`
+It is a Gradle project, so first of all you need Gradle. Then in the root run `gradle build`
 
 To build engine only, go to `nexign-kotlin-bp-dsl-engine` folder and execute the same command.
 
